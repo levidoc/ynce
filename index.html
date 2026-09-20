@@ -532,7 +532,7 @@
         <h1 class="font-serif text-5xl md:text-7xl font-custom text-ice mb-4">The Menu</h1>
         <p class="text-xl text-frost mb-16">Everything we're serving right now. No filler, no fluff — just fire.</p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div class="group cursor-pointer" onclick="viewProduct('1', 'menu')">
+            <div class="group cursor-pointer"  onclick="viewProduct('5', 'menu')>
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_hilux.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -545,7 +545,7 @@
                         Russian and polony.</p>
             </div>
 
-            <div class="group cursor-pointer" onclick="viewProduct('2', 'menu')">
+            <div class="group cursor-pointer" onclick="viewProduct('6', 'menu')">
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_ferrari.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -584,7 +584,7 @@
                         a beef patty. </p>
             </div>
 
-            <div class="group cursor-pointer" onclick="viewProduct('5', 'menu')">
+            <div class="group cursor-pointer" onclick="viewProduct('1', 'menu')">
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_rolls_royce.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -598,7 +598,7 @@
             </div>
 
 
-            <div class="group cursor-pointer" onclick="viewProduct('6', 'menu')">
+            <div class="group cursor-pointer" onclick="viewProduct('2', 'menu')">
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_vw_polo.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -1087,6 +1087,7 @@
             products: 'ynce_products_v1',
             categories: 'ynce_categories_v1',
             orders: 'ynce_orders_v1',
+            confirmations: 'ynce_order_confirmations_v1',
             reviews: 'ynce_reviews_v1'
         };
         const ORDER_RETENTION_DAYS = 365;
@@ -1100,6 +1101,7 @@
         let userSession = JSON.parse(localStorage.getItem('wde_session')) || null;
         let searchTimeout = null;
         let checkoutStep = 1;
+        let accountOrders = [];
         const paymentMethod = 'cod';
         const TOPPING_OPTIONS = {
             remove: ['Cheese', 'Atchar', 'Egg', 'Bacon', 'Russian', 'Polony'],
@@ -1148,6 +1150,45 @@
                 return Number.isNaN(savedAt) || Date.now() - savedAt <= ORDER_RETENTION_MS;
             });
             writeCache(CACHE_KEYS.orders, orders);
+        }
+
+        function getOrderKey(order) {
+            return String(order.id || order.order_id || order.local_order_id || order.created_at || 'unknown');
+        }
+
+        function getOrderConfirmation(order) {
+            const confirmations = readCache(CACHE_KEYS.confirmations, {});
+            const email = userSession?.email?.toLowerCase();
+            return email ? confirmations[email]?.[getOrderKey(order)] : null;
+        }
+
+        async function confirmOrderReceived(orderKey) {
+            if (!userSession?.email) return;
+            const order = accountOrders.find(item => getOrderKey(item) === String(orderKey));
+            if (!order) return;
+            const confirmedAt = new Date().toISOString();
+            try {
+                await notifyDiscord(CONFIG.DISCORD_ORDER_WEBHOOK, '', [{
+                    title: 'Customer confirmed order received',
+                    color: 65280,
+                    fields: [
+                        { name: 'Customer', value: userSession.name || userSession.email, inline: true },
+                        { name: 'Email', value: userSession.email, inline: true },
+                        { name: 'Order', value: getOrderKey(order), inline: true },
+                        { name: 'Confirmed at', value: confirmedAt, inline: true }
+                    ],
+                    timestamp: confirmedAt
+                }]);
+                const confirmations = readCache(CACHE_KEYS.confirmations, {});
+                const email = userSession.email.toLowerCase();
+                confirmations[email] = confirmations[email] || {};
+                confirmations[email][getOrderKey(order)] = confirmedAt;
+                writeCache(CACHE_KEYS.confirmations, confirmations);
+                renderAccountOrders(accountOrders);
+            } catch (error) {
+                console.error('Order confirmation webhook error:', error);
+                alert('We could not send the confirmation. Please try again.');
+            }
         }
 
         async function notifyDiscord(webhookUrl, content, embeds = []) {
@@ -1775,6 +1816,7 @@
         }
 
         function renderAccountOrders(orders) {
+            accountOrders = orders;
             const list = document.getElementById('dash-orders-list');
             const total = orders.reduce((sum, order) => sum + (parseFloat(order.total || order.amount) || 0), 0);
             document.getElementById('dash-orders').textContent = orders.length;
@@ -1787,6 +1829,11 @@
                 const status = String(order.status || order.state || 'pending').replace(/_/g, ' ');
                 const items = order.items || order.line_items || [];
                 const itemSummary = items.map(item => `${item.quantity || 1} x ${item.name || item.product_name || 'Item'}`).join(', ');
+                const orderKey = getOrderKey(order);
+                const confirmation = getOrderConfirmation(order);
+                const confirmationAction = confirmation
+                    ? `<span class="text-green-400 text-xs">Received ${new Date(confirmation).toLocaleDateString()}</span>`
+                    : `<button onclick="confirmOrderReceived('${orderKey.replace(/'/g, '&#39;')}')" class="text-ice underline underline-offset-4">Confirm received</button>`;
                 return `<article class="bg-surface border border-edge p-6 rounded-2xl">
                     <div class="flex flex-wrap justify-between gap-4 mb-4">
                         <div><p class="text-xs uppercase tracking-widest text-frost">Order ${order.id || order.order_id || ''}</p>
@@ -1796,7 +1843,7 @@
                     <div class="flex items-center gap-1 mb-4">${renderDeliveryProgress(status)}</div>
                     <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-frost">
                         <span>${order.created_at ? new Date(order.created_at).toLocaleDateString() : 'Recent order'} · ${CONFIG.CURRENCY} ${parseFloat(order.total || order.amount || 0).toFixed(0)}</span>
-                        <button onclick="reorder(${JSON.stringify(items).replace(/\"/g, '&quot;')})" class="text-ice underline underline-offset-4">Reorder</button>
+                        <div class="flex flex-wrap gap-4 items-center">${confirmationAction}<button onclick="reorder(${JSON.stringify(items).replace(/\"/g, '&quot;')})" class="text-ice underline underline-offset-4">Reorder</button></div>
                     </div>
                 </article>`;
             }).join('');
