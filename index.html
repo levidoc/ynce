@@ -532,7 +532,7 @@
         <h1 class="font-serif text-5xl md:text-7xl font-custom text-ice mb-4">The Menu</h1>
         <p class="text-xl text-frost mb-16">Everything we're serving right now. No filler, no fluff — just fire.</p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div class="group cursor-pointer" onclick="">
+            <div class="group cursor-pointer" onclick="viewProduct('1', 'menu')">
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_hilux.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -545,7 +545,7 @@
                         Russian and polony.</p>
             </div>
 
-            <div class="group cursor-pointer" onclick="">
+            <div class="group cursor-pointer" onclick="viewProduct('2', 'menu')">
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_ferrari.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -558,7 +558,7 @@
                         , egg and cheese.</p>
             </div>
 
-            <div class="group cursor-pointer" onclick="">
+            <div class="group cursor-pointer" onclick="viewProduct('3', 'menu')">
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_lamborghini.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -571,7 +571,7 @@
                         spicy atchar.</p>
             </div>
 
-            <div class="group cursor-pointer" onclick="">
+            <div class="group cursor-pointer" onclick="viewProduct('4', 'menu')">
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_g_wagon.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -584,7 +584,7 @@
                         a beef patty. </p>
             </div>
 
-            <div class="group cursor-pointer" onclick="">
+            <div class="group cursor-pointer" onclick="viewProduct('5', 'menu')">
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_rolls_royce.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -598,7 +598,7 @@
             </div>
 
 
-            <div class="group cursor-pointer" onclick="">
+            <div class="group cursor-pointer" onclick="viewProduct('6', 'menu')">
                 <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
                     <img src="assets/img/menu/menu_vw_polo.png"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
@@ -1005,7 +1005,6 @@
          * We Dont Eats - Store Engine Integration
          * Powered by VM Embedded Store Engine API
          */
-
         const CONFIG = {
             API_BASE: 'https://gigs.varsitymarket.co.za/store-access',
             STORE_ID: '2',
@@ -1090,6 +1089,8 @@
             orders: 'ynce_orders_v1',
             reviews: 'ynce_reviews_v1'
         };
+        const ORDER_RETENTION_DAYS = 365;
+        const ORDER_RETENTION_MS = ORDER_RETENTION_DAYS * 24 * 60 * 60 * 1000;
         let PRODUCTS = [], CATEGORIES = [];
         let cartData = { items: [], item_count: 0, subtotal: 0 };
         let cartId = localStorage.getItem('vm_cart_id') || null;
@@ -1117,16 +1118,35 @@
 
         function getStoredOrders() {
             const orders = readCache(CACHE_KEYS.orders, {});
-            return userSession?.email ? (orders[userSession.email.toLowerCase()] || []) : [];
+            if (!userSession?.email) return [];
+            const email = userSession.email.toLowerCase();
+            const now = Date.now();
+            const storedOrders = Array.isArray(orders[email]) ? orders[email] : [];
+            const retainedOrders = storedOrders.filter(order => {
+                const savedAt = Date.parse(order.saved_at || order.created_at || '');
+                return Number.isNaN(savedAt) || now - savedAt <= ORDER_RETENTION_MS;
+            });
+            if (retainedOrders.length !== storedOrders.length) {
+                orders[email] = retainedOrders;
+                writeCache(CACHE_KEYS.orders, orders);
+            }
+            return retainedOrders;
         }
 
         function storeOrder(order) {
             if (!userSession?.email || !order) return;
             const orders = readCache(CACHE_KEYS.orders, {});
             const email = userSession.email.toLowerCase();
-            const orderId = order.id || order.order_id;
-            if (!orders[email]) orders[email] = [];
-            if (!orderId || !orders[email].some(item => String(item.id || item.order_id) === String(orderId))) orders[email].unshift(order);
+            const savedOrder = { ...order, saved_at: order.saved_at || new Date().toISOString() };
+            const orderId = savedOrder.id || savedOrder.order_id || savedOrder.local_order_id;
+            orders[email] = Array.isArray(orders[email]) ? orders[email] : [];
+            if (!orderId || !orders[email].some(item => String(item.id || item.order_id || item.local_order_id) === String(orderId))) {
+                orders[email].unshift(savedOrder);
+            }
+            orders[email] = orders[email].filter(item => {
+                const savedAt = Date.parse(item.saved_at || item.created_at || '');
+                return Number.isNaN(savedAt) || Date.now() - savedAt <= ORDER_RETENTION_MS;
+            });
             writeCache(CACHE_KEYS.orders, orders);
         }
 
@@ -1468,6 +1488,11 @@
             document.getElementById('drawer-overlay').classList.toggle('pointer-events-none');
         }
 
+        function closeCart() {
+            document.getElementById('cart-drawer').classList.remove('open');
+            document.getElementById('drawer-overlay').classList.add('opacity-0', 'pointer-events-none');
+        }
+
         // DISCOUNT
         function applyDiscount() {
             const code = document.getElementById('discount-code').value.toUpperCase();
@@ -1572,6 +1597,9 @@
                 return;
             }
             try {
+                const sub = parseFloat(cartData.subtotal) || 0;
+                const ship = sub >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_COST;
+                const disc = currentDiscount ? sub * (currentDiscount.percent / 100) : 0;
                 const orderDetails = {
                     cart_id: cartId,
                     items: cartData.items.map(item => ({
@@ -1610,14 +1638,32 @@
                     console.warn('Legacy order endpoint rejected the payload; retrying cash checkout endpoint.', orderError);
                     result = await api.createCashCheckout(orderDetails);
                 }
-                storeOrder(result.data || result.order || result);
+                const remoteOrder = result.data || result.order || result;
+                const localOrder = {
+                    ...remoteOrder,
+                    local_order_id: `local-${Date.now()}`,
+                    created_at: remoteOrder.created_at || new Date().toISOString(),
+                    total: remoteOrder.total || (sub + ship - disc),
+                    status: remoteOrder.status || 'pending',
+                    items: cartData.items.map(item => ({
+                        product_id: getCartProductId(item),
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        customizations: getItemCustomizations(item)
+                    }))
+                };
+                storeOrder(localOrder);
                 await notifyCompletedOrder(result, addressText);
                 alert('Order placed! Check your email for confirmation.');
                 cartId = null; localStorage.removeItem('vm_cart_id');
                 cartData = { items: [], item_count: 0, subtotal: 0 };
                 currentDiscount = null;
                 renderCart(); updateCartDot();
-                closeCheckout(); navigate('home');
+                closeCheckout();
+                closeCart();
+                closeMenu();
+                navigate('home');
             } catch (error) {
                 console.error('Checkout API error:', error);
                 alert(error.message || 'Something went wrong. Try again.');
