@@ -1441,7 +1441,6 @@
             document.getElementById('pdp-category').textContent = p.category_name || 'Item';
             pdpCustomizations = { add: {}, remove: {} };
             renderCustomizationOptions();
-            renderProductReviews(p.id);
             document.getElementById('pdp-add').setAttribute('onclick', `addPdpToCart('${p.id}')`);
 
             navigate(`product/${encodeURIComponent(p.id)}`, updateUrl);
@@ -1604,7 +1603,7 @@
             }
         }
 
-        async function notifyCompletedOrder(result, address) {
+        async function notifyCompletedOrder(result, address, estimatedDeliveryAt) {
             try {
                 await notifyDiscord(CONFIG.DISCORD_ORDER_WEBHOOK, '', [{
                     title: 'New cash-on-delivery order',
@@ -1615,6 +1614,7 @@
                         { name: 'Phone', value: document.getElementById('co-phone').value, inline: true },
                         { name: 'Payment', value: 'Cash on delivery', inline: true },
                         { name: 'Delivery area', value: CONFIG.DELIVERY_AREA, inline: true },
+                        { name: 'Estimated delivery', value: formatDeliveryEstimate(estimatedDeliveryAt), inline: true },
                         { name: 'Address', value: address },
                         { name: 'Total', value: document.getElementById('co-total').textContent, inline: true },
                         { name: 'Items', value: cartData.items.map(item => `${item.quantity} x ${item.name}${customizationText(getItemCustomizations(item)).length ? ` (${customizationText(getItemCustomizations(item)).join('; ')})` : ''}`).join('\n').slice(0, 1024) || 'Cart items unavailable' },
@@ -1625,6 +1625,10 @@
             } catch (notificationError) {
                 console.error('Order webhook error:', notificationError);
             }
+        }
+
+        function formatDeliveryEstimate(estimatedDeliveryAt) {
+            return new Date(estimatedDeliveryAt).toLocaleString([], { hour: 'numeric', minute: '2-digit', day: 'numeric', month: 'short' });
         }
 
         async function handleCheckout(e) {
@@ -1650,6 +1654,7 @@
                 const sub = parseFloat(cartData.subtotal) || 0;
                 const ship = sub >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_COST;
                 const disc = currentDiscount ? sub * (currentDiscount.percent / 100) : 0;
+                const estimatedDeliveryAt = new Date(Date.now() + 45 * 60 * 1000).toISOString();
                 const orderDetails = {
                     cart_id: cartId,
                     items: cartData.items.map(item => ({
@@ -1672,6 +1677,8 @@
                     postal_code: address.postal_code,
                     delivery_notes: address.notes,
                     delivery_area: CONFIG.DELIVERY_AREA,
+                    estimated_delivery_at: estimatedDeliveryAt,
+                    estimated_delivery_minutes: 45,
                     payment_method: 'cod',
                     payment_type: 'cash',
                     payment_status: 'pending',
@@ -1693,6 +1700,7 @@
                     ...remoteOrder,
                     local_order_id: `local-${Date.now()}`,
                     created_at: remoteOrder.created_at || new Date().toISOString(),
+                    estimated_delivery_at: remoteOrder.estimated_delivery_at || estimatedDeliveryAt,
                     total: remoteOrder.total || (sub + ship - disc),
                     status: remoteOrder.status || 'pending',
                     items: cartData.items.map(item => ({
@@ -1704,8 +1712,8 @@
                     }))
                 };
                 storeOrder(localOrder);
-                await notifyCompletedOrder(result, addressText);
-                alert('Order placed! Check your email for confirmation.');
+                await notifyCompletedOrder(result, addressText, localOrder.estimated_delivery_at);
+                alert(`Order placed! Estimated delivery: ${formatDeliveryEstimate(localOrder.estimated_delivery_at)} (about 45 minutes).`);
                 cartId = null; localStorage.removeItem('vm_cart_id');
                 cartData = { items: [], item_count: 0, subtotal: 0 };
                 currentDiscount = null;
@@ -1840,13 +1848,16 @@
                 const itemSummary = items.map(item => `${item.quantity || 1} x ${item.name || item.product_name || 'Item'}`).join(', ');
                 const orderKey = getOrderKey(order);
                 const confirmation = getOrderConfirmation(order);
+                const estimatedDelivery = order.estimated_delivery_at
+                    ? `<p class="text-neon text-sm mt-2">Estimated delivery: ${formatDeliveryEstimate(order.estimated_delivery_at)}</p>`
+                    : '';
                 const confirmationAction = confirmation
                     ? `<span class="text-green-400 text-xs">Received ${new Date(confirmation).toLocaleDateString()}</span>`
                     : `<button onclick="confirmOrderReceived('${orderKey.replace(/'/g, '&#39;')}')" class="text-ice underline underline-offset-4">Confirm received</button>`;
                 return `<article class="bg-surface border border-edge p-6 rounded-2xl">
                     <div class="flex flex-wrap justify-between gap-4 mb-4">
                         <div><p class="text-xs uppercase tracking-widest text-frost">Order ${order.id || order.order_id || ''}</p>
-                        <p class="text-ice font-semibold mt-1">${itemSummary || 'Food order'}</p></div>
+                        <p class="text-ice font-semibold mt-1">${itemSummary || 'Food order'}</p>${estimatedDelivery}</div>
                         <span class="text-neon text-sm font-bold capitalize">${status}</span>
                     </div>
                     <div class="flex items-center gap-1 mb-4">${renderDeliveryProgress(status)}</div>
@@ -1864,24 +1875,6 @@
             const stageIndex = stages.findIndex(stage => normalized.includes(stage));
             const activeIndex = stageIndex < 0 ? (normalized.includes('cancel') ? -1 : 0) : stageIndex;
             return stages.map((stage, index) => `<span class="h-1.5 flex-1 rounded-full ${index <= activeIndex ? 'bg-neon' : 'bg-edge'}" title="${stage}"></span>`).join('');
-        }
-
-        function getProductReviews(productId) {
-            const reviews = readCache(CACHE_KEYS.reviews, {});
-            return Array.isArray(reviews[productId]) ? reviews[productId] : [];
-        }
-
-        function escapeHtml(value) {
-            return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
-        }
-
-        function renderProductReviews(productId) {
-            const reviews = getProductReviews(productId);
-            const list = document.getElementById('pdp-reviews');
-            const average = document.getElementById('pdp-review-average');
-            const averageRating = reviews.length ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : 0;
-            average.textContent = reviews.length ? `${averageRating.toFixed(1)} / 5 (${reviews.length})` : 'No reviews yet';
-            list.innerHTML = reviews.length ? reviews.map(review => `<article class="border-b border-edge pb-4"><div class="flex justify-between gap-3"><span class="text-neon">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span><span class="text-xs text-frost">${new Date(review.created_at).toLocaleDateString()}</span></div><p class="text-sm text-ice mt-2">${escapeHtml(review.text)}</p><p class="text-xs text-frost mt-2">${escapeHtml(review.name)}</p></article>`).join('') : '<p class="text-sm text-frost">Be the first to review this item.</p>';
         }
 
         async function submitProductReview() {
