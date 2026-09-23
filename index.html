@@ -1543,7 +1543,6 @@
 
         async function addPdpToCart(pid) {
             await ensureCart();
-            updatePdpCustomizations();
             cartCustomizations[pid] = pdpCustomizations;
             writeCache('ynce_cart_customizations_v1', cartCustomizations);
             await api.addToCart(cartId, pid, pdpQty, pdpCustomizations);
