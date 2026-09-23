@@ -448,7 +448,7 @@
                         <i class="fa-solid fa-sliders text-neon"></i>
                     </div>
                     <div>
-                        <div class="flex items-center justify-between mb-3"><p class="text-xs font-bold uppercase tracking-widest text-frost">Add toppings</p><span class="text-[10px] text-frost">Choose amount</span></div>
+                        <div class="flex items-center justify-between mb-3"><p class="text-xs font-bold uppercase tracking-widest text-frost">Add toppings</p><span class="text-[10px] text-neon">R5 each</span></div>
                         <div id="pdp-add-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                         <button id="pdp-removal-trigger" type="button" onclick="openRemovalModal()" class="mt-5 text-xs text-frost hover:text-ice underline underline-offset-4">Remove ingredients</button>
                     </div>
@@ -506,6 +506,21 @@
             </div>
             <div id="pdp-remove-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
             <button type="button" onclick="closeRemovalModal()" class="w-full mt-6 bg-ice text-void font-bold py-3 rounded-full">Done</button>
+        </section>
+    </div>
+
+    <div id="order-confirmation-modal" class="hidden fixed inset-0 z-[130] flex items-center justify-center bg-black/75 p-5" onclick="if(event.target === this) closeOrderConfirmation()">
+        <section role="dialog" aria-modal="true" aria-labelledby="order-confirmation-title" class="w-full max-w-md bg-surface border border-edge rounded-3xl p-8 text-center shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-neon/15 text-neon flex items-center justify-center mx-auto mb-5"><i class="fa-solid fa-check text-2xl"></i></div>
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-neon mb-2">Order received</p>
+            <h2 id="order-confirmation-title" class="text-ice text-2xl font-bold mb-2">Your order is confirmed</h2>
+            <p class="text-frost text-sm mb-6">Estimated arrival time</p>
+            <div class="bg-deep border border-edge rounded-2xl p-5 mb-5">
+                <p id="order-confirmation-time" class="text-ice text-xl font-bold"></p>
+                <p class="text-frost text-xs mt-2">About 45 minutes from now</p>
+            </div>
+            <p id="order-confirmation-id" class="text-frost text-xs mb-6"></p>
+            <button type="button" onclick="closeOrderConfirmation()" class="w-full bg-ice text-void font-bold py-4 rounded-full">Got it</button>
         </section>
     </div>
 
@@ -859,6 +874,7 @@
             <div class="space-y-2 text-sm text-frost border-b border-edge pb-4 mb-4">
                 <div class="flex justify-between"><span>Subtotal</span><span id="subtotal" class="text-ice">R 0</span>
                 </div>
+                <div class="flex justify-between"><span>Toppings</span><span id="cart-topping-total" class="text-ice">R 0</span></div>
                 <div class="flex justify-between hidden" id="discount-row"><span class="text-neon">Discount (<span
                             id="discount-label"></span>)</span><span class="text-neon" id="discount-amount">-R 0</span>
                 </div>
@@ -932,6 +948,7 @@
                     <div class="border-t border-edge pt-6 space-y-2 text-sm">
                     <div class="flex justify-between text-frost"><span>Subtotal</span><span id="co-subtotal"
                             class="text-ice">R 0</span></div>
+                        <div class="flex justify-between text-frost"><span>Toppings</span><span id="co-toppings" class="text-ice">R 0</span></div>
                         <div class="flex justify-between text-frost"><span>Shipping</span><span id="co-shipping"
                             class="text-ice">R 25</span></div>
                         <div class="border-t border-edge pt-3 mt-3"><p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Toppings and changes</p><div id="co-customizations" class="text-xs text-ice space-y-1"><p>No changes selected.</p></div></div>
@@ -1100,6 +1117,7 @@
         };
         const ORDER_RETENTION_DAYS = 365;
         const ORDER_RETENTION_MS = ORDER_RETENTION_DAYS * 24 * 60 * 60 * 1000;
+        const TOPPING_PRICE = 5;
         let PRODUCTS = [], CATEGORIES = [];
         let cartData = { items: [], item_count: 0, subtotal: 0 };
         let cartId = localStorage.getItem('vm_cart_id') || null;
@@ -1115,7 +1133,7 @@
             remove: ['Cheese', 'Atchar', 'Egg', 'Bacon', 'Russian', 'Polony'],
             add: ['Extra cheese', 'Extra bacon', 'Extra egg', 'Extra atchar']
         };
-        let pdpCustomizations = { add: {}, remove: {} };
+        let pdpCustomizations = { add: {}, remove: [] };
         let cartCustomizations = readCache('ynce_cart_customizations_v1', {});
 
         function readCache(key, fallback = []) {
@@ -1262,6 +1280,9 @@
                 document.getElementById(`pdp-${type}-options`).innerHTML = TOPPING_OPTIONS[type].map((label, index) => {
                     const key = label.toLowerCase();
                     const id = `pdp-${type}-${index}`;
+                    if (type === 'remove') {
+                        return `<label for="${id}" class="flex items-center gap-3 bg-deep border border-edge rounded-xl px-4 py-3 text-sm text-ice cursor-pointer"><input id="${id}" type="checkbox" value="${key}" onchange="toggleRemovedIngredient('${key}', this.checked)" class="accent-[#4A90FF] w-4 h-4">${label}</label>`;
+                    }
                     return `<div class="flex items-center justify-between gap-3 bg-deep border border-edge rounded-xl px-3 py-3 transition-colors" id="${id}-card"><span class="text-sm text-ice">${label}</span><div class="flex items-center gap-2"><button type="button" aria-label="Decrease ${label}" onclick="changeToppingAmount('${type}', '${key}', -1)" class="w-8 h-8 rounded-full border border-edge text-frost hover:text-ice hover:border-frost">−</button><span id="${id}-amount" class="w-5 text-center text-xs font-bold text-frost">0</span><button type="button" aria-label="Increase ${label}" onclick="changeToppingAmount('${type}', '${key}', 1)" class="w-8 h-8 rounded-full bg-slate text-ice hover:bg-neon">+</button></div></div>`;
                 }).join('');
             });
@@ -1285,10 +1306,18 @@
         });
 
         function updateRemovalTrigger() {
-            const total = Object.values(pdpCustomizations.remove || {}).reduce((sum, amount) => sum + amount, 0);
-            document.getElementById('pdp-removal-trigger').textContent = total
-                ? `Remove ingredients · ${total} selected`
+            const selectedCount = Array.isArray(pdpCustomizations.remove) ? pdpCustomizations.remove.length : Object.keys(pdpCustomizations.remove || {}).length;
+            document.getElementById('pdp-removal-trigger').textContent = selectedCount
+                ? 'Edit removed ingredients'
                 : 'Remove ingredients';
+        }
+
+        function toggleRemovedIngredient(key, selected) {
+            const removals = Array.isArray(pdpCustomizations.remove) ? pdpCustomizations.remove : [];
+            pdpCustomizations.remove = selected
+                ? [...new Set([...removals, key])]
+                : removals.filter(item => item !== key);
+            updateRemovalTrigger();
         }
 
         function changeToppingAmount(type, key, delta) {
@@ -1311,7 +1340,7 @@
             const format = values => Array.isArray(values) ? values.join(', ') : Object.entries(values).map(([name, amount]) => `${name} × ${amount}`).join(', ');
             const lines = [];
             if (Object.keys(additions).length) lines.push(`Add: ${format(additions)}`);
-            if (Object.keys(removals).length) lines.push(`Remove: ${format(removals)}`);
+            if ((Array.isArray(removals) ? removals.length : Object.keys(removals).length)) lines.push(`Remove: ${format(removals)}`);
             return lines;
         }
 
@@ -1471,7 +1500,7 @@
             document.getElementById('pdp-qty').textContent = '1';
             document.getElementById('pdp-desc').textContent = p.description || 'No description available.';
             document.getElementById('pdp-category').textContent = p.category_name || 'Item';
-            pdpCustomizations = { add: {}, remove: {} };
+            pdpCustomizations = { add: {}, remove: [] };
             renderCustomizationOptions();
             document.getElementById('pdp-add').setAttribute('onclick', `addPdpToCart('${p.id}')`);
 
@@ -1500,6 +1529,23 @@
             updateCartDot();
         }
 
+        function getToppingCount(customizations = {}) {
+            const additions = customizations.add || customizations.additions || {};
+            return Array.isArray(additions)
+                ? additions.length
+                : Object.values(additions).reduce((sum, amount) => sum + (Number(amount) || 0), 0);
+        }
+
+        function getCartToppingCost() {
+            return (cartData.items || []).reduce((sum, item) => {
+                return sum + getToppingCount(getItemCustomizations(item)) * (Number(item.quantity) || 1) * TOPPING_PRICE;
+            }, 0);
+        }
+
+        function getCartSubtotal() {
+            return (parseFloat(cartData.subtotal) || 0) + getCartToppingCost();
+        }
+
         function updateCartDot() {
             const dot = document.getElementById('cart-dot');
             const c = cartData.item_count || 0;
@@ -1513,7 +1559,8 @@
                 container.innerHTML = '<p class="text-frost text-center py-10">Your bag is empty.</p>';
                 return;
             }
-            document.getElementById('subtotal').textContent = CONFIG.CURRENCY + ' ' + parseFloat(cartData.subtotal).toFixed(0);
+            document.getElementById('subtotal').textContent = CONFIG.CURRENCY + ' ' + (parseFloat(cartData.subtotal) || 0).toFixed(0);
+            document.getElementById('cart-topping-total').textContent = CONFIG.CURRENCY + ' ' + getCartToppingCost().toFixed(0);
             updateCartTotal();
 
             container.innerHTML = cartData.items.map(item => `
@@ -1521,7 +1568,7 @@
                     <img src="${getImgUrl(item)}" class="w-16 h-16 rounded-xl object-cover border border-edge">
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-semibold text-ice truncate">${item.name}</p>
-                        <p class="text-frost text-sm">${CONFIG.CURRENCY} ${parseFloat(item.price).toFixed(0)}</p>
+                        <p class="text-frost text-sm">${CONFIG.CURRENCY} ${parseFloat(item.price).toFixed(0)} base${getToppingCount(getItemCustomizations(item)) ? ` · toppings +${CONFIG.CURRENCY} ${getToppingCount(getItemCustomizations(item)) * TOPPING_PRICE} / item` : ''}</p>
                         ${customizationText(getItemCustomizations(item)).map(line => `<p class="text-neon text-xs">${line}</p>`).join('')}
                         <div class="flex items-center gap-3 mt-2">
                             <button onclick="updateCartItem('${item.product_id}', ${item.quantity - 1})" class="w-7 h-7 rounded-full bg-edge text-xs flex items-center justify-center hover:bg-frost hover:text-void transition-colors">-</button>
@@ -1535,7 +1582,7 @@
         }
 
         function updateCartTotal() {
-            const sub = parseFloat(cartData.subtotal) || 0;
+            const sub = getCartSubtotal();
             const ship = sub >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_COST;
             const disc = currentDiscount ? sub * (currentDiscount.percent / 100) : 0;
             document.getElementById('cart-total').textContent = CONFIG.CURRENCY + ' ' + (sub + ship - disc).toFixed(0);
@@ -1581,7 +1628,7 @@
             else { alert('Invalid code.'); return; }
             document.getElementById('discount-row').classList.remove('hidden');
             document.getElementById('discount-label').textContent = currentDiscount.code;
-            const disc = (parseFloat(cartData.subtotal) || 0) * (currentDiscount.percent / 100);
+            const disc = getCartSubtotal() * (currentDiscount.percent / 100);
             document.getElementById('discount-amount').textContent = '-' + CONFIG.CURRENCY + ' ' + disc.toFixed(0);
             updateCartTotal();
         }
@@ -1595,11 +1642,12 @@
                 setAccountMessage('Sign in or create an account before checking out.', true);
                 return;
             }
-            const sub = parseFloat(cartData.subtotal) || 0;
+            const sub = getCartSubtotal();
             const ship = sub >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_COST;
             const disc = currentDiscount ? sub * (currentDiscount.percent / 100) : 0;
 
-            document.getElementById('co-subtotal').textContent = CONFIG.CURRENCY + ' ' + sub.toFixed(0);
+            document.getElementById('co-subtotal').textContent = CONFIG.CURRENCY + ' ' + (parseFloat(cartData.subtotal) || 0).toFixed(0);
+            document.getElementById('co-toppings').textContent = CONFIG.CURRENCY + ' ' + getCartToppingCost().toFixed(0);
             document.getElementById('co-email').value = userSession.email;
             document.getElementById('co-shipping').textContent = ship === 0 ? 'FREE' : CONFIG.CURRENCY + ' ' + ship;
             if (currentDiscount) {
@@ -1647,6 +1695,7 @@
                         { name: 'Delivery area', value: CONFIG.DELIVERY_AREA, inline: true },
                         { name: 'Estimated delivery', value: formatDeliveryEstimate(estimatedDeliveryAt), inline: true },
                         { name: 'Address', value: address },
+                        { name: 'Topping fees', value: `${CONFIG.CURRENCY} ${getCartToppingCost().toFixed(0)}`, inline: true },
                         { name: 'Total', value: document.getElementById('co-total').textContent, inline: true },
                         { name: 'Items', value: cartData.items.map(item => `${item.quantity} x ${item.name}${customizationText(getItemCustomizations(item)).length ? ` (${customizationText(getItemCustomizations(item)).join('; ')})` : ''}`).join('\n').slice(0, 1024) || 'Cart items unavailable' },
                         { name: 'Product links', value: cartData.items.map(item => `${item.name}: ${new URL(`#/product/${encodeURIComponent(getCartProductId(item))}/`, window.location.href).href}`).join('\n').slice(0, 1024) || 'No product links' }
@@ -1660,6 +1709,21 @@
 
         function formatDeliveryEstimate(estimatedDeliveryAt) {
             return new Date(estimatedDeliveryAt).toLocaleString([], { hour: 'numeric', minute: '2-digit', day: 'numeric', month: 'short' });
+        }
+
+        function showOrderConfirmation(order) {
+            const eta = new Date(order.estimated_delivery_at);
+            document.getElementById('order-confirmation-time').textContent = eta.toLocaleString([], {
+                weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'
+            });
+            const orderId = order.id || order.order_id;
+            document.getElementById('order-confirmation-id').textContent = orderId ? `Order #${orderId}` : '';
+            document.getElementById('order-confirmation-modal').classList.remove('hidden');
+            document.getElementById('order-confirmation-modal').querySelector('button').focus();
+        }
+
+        function closeOrderConfirmation() {
+            document.getElementById('order-confirmation-modal').classList.add('hidden');
         }
 
         async function handleCheckout(e) {
@@ -1682,16 +1746,19 @@
                 return;
             }
             try {
-                const sub = parseFloat(cartData.subtotal) || 0;
+                const toppingsTotal = getCartToppingCost();
+                const sub = getCartSubtotal();
                 const ship = sub >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_COST;
                 const disc = currentDiscount ? sub * (currentDiscount.percent / 100) : 0;
+                const orderTotal = sub + ship - disc;
                 const estimatedDeliveryAt = new Date(Date.now() + 45 * 60 * 1000).toISOString();
                 const orderDetails = {
                     cart_id: cartId,
                     items: cartData.items.map(item => ({
                         product_id: getCartProductId(item),
                         quantity: Number(item.quantity) || 1,
-                        customizations: getItemCustomizations(item)
+                        customizations: getItemCustomizations(item),
+                        toppings_total: getToppingCount(getItemCustomizations(item)) * (Number(item.quantity) || 1) * TOPPING_PRICE
                     })),
                     customer_name: document.getElementById('co-name').value,
                     customer_email: userSession.email,
@@ -1710,6 +1777,11 @@
                     delivery_area: CONFIG.DELIVERY_AREA,
                     estimated_delivery_at: estimatedDeliveryAt,
                     estimated_delivery_minutes: 45,
+                    items_subtotal: parseFloat(cartData.subtotal) || 0,
+                    toppings_total: toppingsTotal,
+                    shipping_total: ship,
+                    discount_total: disc,
+                    total: orderTotal,
                     payment_method: 'cod',
                     payment_type: 'cash',
                     payment_status: 'pending',
@@ -1732,19 +1804,20 @@
                     local_order_id: `local-${Date.now()}`,
                     created_at: remoteOrder.created_at || new Date().toISOString(),
                     estimated_delivery_at: remoteOrder.estimated_delivery_at || estimatedDeliveryAt,
-                    total: remoteOrder.total || (sub + ship - disc),
+                    total: orderTotal,
                     status: remoteOrder.status || 'pending',
                     items: cartData.items.map(item => ({
                         product_id: getCartProductId(item),
                         name: item.name,
                         price: item.price,
                         quantity: item.quantity,
-                        customizations: getItemCustomizations(item)
+                        customizations: getItemCustomizations(item),
+                        toppings_total: getToppingCount(getItemCustomizations(item)) * (Number(item.quantity) || 1) * TOPPING_PRICE
                     }))
                 };
                 storeOrder(localOrder);
                 await notifyCompletedOrder(result, addressText, localOrder.estimated_delivery_at);
-                alert(`Order placed! Estimated delivery: ${formatDeliveryEstimate(localOrder.estimated_delivery_at)} (about 45 minutes).`);
+                showOrderConfirmation(localOrder);
                 cartId = null; localStorage.removeItem('vm_cart_id');
                 cartData = { items: [], item_count: 0, subtotal: 0 };
                 currentDiscount = null;
