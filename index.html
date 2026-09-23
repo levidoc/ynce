@@ -447,13 +447,15 @@
                         </div>
                         <i class="fa-solid fa-sliders text-neon"></i>
                     </div>
-                    <div class="mb-5">
-                        <p class="text-xs font-bold uppercase tracking-widest text-frost mb-3">Remove</p>
-                        <div id="pdp-remove-options" class="grid grid-cols-2 gap-3"></div>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-frost mb-3">Add</p>
-                        <div id="pdp-add-options" class="grid grid-cols-2 gap-3"></div>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-3"><p class="text-xs font-bold uppercase tracking-widest text-frost">Remove ingredients</p><span class="text-[10px] text-frost">Choose amount</span></div>
+                            <div id="pdp-remove-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-3"><p class="text-xs font-bold uppercase tracking-widest text-frost">Add toppings</p><span class="text-[10px] text-frost">Choose amount</span></div>
+                            <div id="pdp-add-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-10">
@@ -480,10 +482,9 @@
                 </div>
                 <div class="bg-surface border border-edge p-8 rounded-2xl mt-6">
                     <div class="flex justify-between items-center mb-5">
-                        <h3 class="text-xs font-bold uppercase tracking-widest text-ice">Customer reviews</h3>
-                        <span id="pdp-review-average" class="text-neon text-sm"></span>
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-ice">Leave a review</h3>
+                        <span class="text-neon text-xs">Sent to Adminss</span>
                     </div>
-                    <div id="pdp-reviews" class="space-y-4 mb-6"></div>
                     <div id="pdp-review-form" class="border-t border-edge pt-5">
                         <p class="text-xs text-frost mb-3">Share your experience</p>
                         <div class="flex gap-2 mb-3" role="radiogroup" aria-label="Rating">
@@ -1107,7 +1108,7 @@
             remove: ['Cheese', 'Atchar', 'Egg', 'Bacon', 'Russian', 'Polony'],
             add: ['Extra cheese', 'Extra bacon', 'Extra egg', 'Extra atchar']
         };
-        let pdpCustomizations = { add: [], remove: [] };
+        let pdpCustomizations = { add: {}, remove: {} };
         let cartCustomizations = readCache('ynce_cart_customizations_v1', {});
 
         function readCache(key, fallback = []) {
@@ -1252,25 +1253,33 @@
         function renderCustomizationOptions() {
             ['remove', 'add'].forEach(type => {
                 document.getElementById(`pdp-${type}-options`).innerHTML = TOPPING_OPTIONS[type].map((label, index) => {
+                    const key = label.toLowerCase();
                     const id = `pdp-${type}-${index}`;
-                    return `<label for="${id}" class="flex items-center gap-2 bg-deep border border-edge rounded-lg p-3 text-xs text-frost cursor-pointer"><input id="${id}" type="checkbox" value="${label}" onchange="updatePdpCustomizations()">${label}</label>`;
+                    return `<div class="flex items-center justify-between gap-3 bg-deep border border-edge rounded-xl px-3 py-3 transition-colors" id="${id}-card"><span class="text-sm text-ice">${label}</span><div class="flex items-center gap-2"><button type="button" aria-label="Decrease ${label}" onclick="changeToppingAmount('${type}', '${key}', -1)" class="w-8 h-8 rounded-full border border-edge text-frost hover:text-ice hover:border-frost">−</button><span id="${id}-amount" class="w-5 text-center text-xs font-bold text-frost">0</span><button type="button" aria-label="Increase ${label}" onclick="changeToppingAmount('${type}', '${key}', 1)" class="w-8 h-8 rounded-full bg-slate text-ice hover:bg-neon">+</button></div></div>`;
                 }).join('');
             });
         }
 
-        function updatePdpCustomizations() {
-            pdpCustomizations = {
-                remove: Array.from(document.querySelectorAll('#pdp-remove-options input:checked')).map(input => input.value),
-                add: Array.from(document.querySelectorAll('#pdp-add-options input:checked')).map(input => input.value)
-            };
+        function changeToppingAmount(type, key, delta) {
+            const amount = Math.max(0, Math.min(10, (pdpCustomizations[type][key] || 0) + delta));
+            if (amount) pdpCustomizations[type][key] = amount;
+            else delete pdpCustomizations[type][key];
+            const labels = TOPPING_OPTIONS[type];
+            const index = labels.findIndex(label => label.toLowerCase() === key);
+            const amountEl = document.getElementById(`pdp-${type}-${index}-amount`);
+            amountEl.textContent = amount;
+            amountEl.classList.toggle('text-neon', amount > 0);
+            amountEl.classList.toggle('text-frost', amount === 0);
+            document.getElementById(`pdp-${type}-${index}-card`).classList.toggle('border-neon', amount > 0);
         }
 
         function customizationText(customizations = {}) {
             const additions = customizations.add || customizations.additions || [];
             const removals = customizations.remove || customizations.removals || [];
+            const format = values => Array.isArray(values) ? values.join(', ') : Object.entries(values).map(([name, amount]) => `${name} × ${amount}`).join(', ');
             const lines = [];
-            if (additions.length) lines.push(`Add: ${additions.join(', ')}`);
-            if (removals.length) lines.push(`Remove: ${removals.join(', ')}`);
+            if (Object.keys(additions).length) lines.push(`Add: ${format(additions)}`);
+            if (Object.keys(removals).length) lines.push(`Remove: ${format(removals)}`);
             return lines;
         }
 
@@ -1430,7 +1439,7 @@
             document.getElementById('pdp-qty').textContent = '1';
             document.getElementById('pdp-desc').textContent = p.description || 'No description available.';
             document.getElementById('pdp-category').textContent = p.category_name || 'Item';
-            pdpCustomizations = { add: [], remove: [] };
+            pdpCustomizations = { add: {}, remove: {} };
             renderCustomizationOptions();
             renderProductReviews(p.id);
             document.getElementById('pdp-add').setAttribute('onclick', `addPdpToCart('${p.id}')`);
@@ -1875,7 +1884,7 @@
             list.innerHTML = reviews.length ? reviews.map(review => `<article class="border-b border-edge pb-4"><div class="flex justify-between gap-3"><span class="text-neon">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span><span class="text-xs text-frost">${new Date(review.created_at).toLocaleDateString()}</span></div><p class="text-sm text-ice mt-2">${escapeHtml(review.text)}</p><p class="text-xs text-frost mt-2">${escapeHtml(review.name)}</p></article>`).join('') : '<p class="text-sm text-frost">Be the first to review this item.</p>';
         }
 
-        function submitProductReview() {
+        async function submitProductReview() {
             const product = window._currentProduct;
             const text = document.getElementById('review-text').value.trim();
             const rating = Number(document.querySelector('input[name="review-rating"]:checked')?.value || 5);
@@ -1888,20 +1897,29 @@
                 status.textContent = 'Sign in before posting a review.';
                 return;
             }
-            const reviews = readCache(CACHE_KEYS.reviews, {});
-            const productId = String(product.id);
-            if (!reviews[productId]) reviews[productId] = [];
-            reviews[productId].unshift({
-                rating,
-                text,
-                name: userSession.name || userSession.email,
-                email: userSession.email,
-                created_at: new Date().toISOString()
-            });
-            writeCache(CACHE_KEYS.reviews, reviews);
-            document.getElementById('review-text').value = '';
-            status.textContent = 'Review posted.';
-            renderProductReviews(product.id);
+            const button = document.querySelector('#pdp-review-form button');
+            button.disabled = true;
+            status.textContent = 'Sending review…';
+            try {
+                await notifyDiscord(CONFIG.DISCORD_CONTACT_WEBHOOK, '', [{
+                    title: `Product review: ${product.name}`,
+                    color: 4883199,
+                    fields: [
+                        { name: 'Rating', value: `${'★'.repeat(rating)}${'☆'.repeat(5 - rating)} (${rating}/5)`, inline: true },
+                        { name: 'Customer', value: userSession.name || userSession.email, inline: true },
+                        { name: 'Review', value: text.slice(0, 1024) },
+                        { name: 'Product ID', value: String(product.id), inline: true }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]);
+                document.getElementById('review-text').value = '';
+                status.textContent = 'Review sent. Thanks for sharing!';
+            } catch (error) {
+                console.error('Review webhook error:', error);
+                status.textContent = 'Could not send your review. Please try again.';
+            } finally {
+                button.disabled = false;
+            }
         }
 
         async function reorder(items) {
