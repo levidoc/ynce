@@ -447,15 +447,10 @@
                         </div>
                         <i class="fa-solid fa-sliders text-neon"></i>
                     </div>
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex items-center justify-between mb-3"><p class="text-xs font-bold uppercase tracking-widest text-frost">Remove ingredients</p><span class="text-[10px] text-frost">Choose amount</span></div>
-                            <div id="pdp-remove-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-                        </div>
-                        <div>
-                            <div class="flex items-center justify-between mb-3"><p class="text-xs font-bold uppercase tracking-widest text-frost">Add toppings</p><span class="text-[10px] text-frost">Choose amount</span></div>
-                            <div id="pdp-add-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-                        </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-3"><p class="text-xs font-bold uppercase tracking-widest text-frost">Add toppings</p><span class="text-[10px] text-frost">Choose amount</span></div>
+                        <div id="pdp-add-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        <button id="pdp-removal-trigger" type="button" onclick="openRemovalModal()" class="mt-5 text-xs text-frost hover:text-ice underline underline-offset-4">Remove ingredients</button>
                     </div>
                 </div>
                 <div class="mb-10">
@@ -501,6 +496,17 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="pdp-removal-modal" class="hidden fixed inset-0 z-[120] flex items-center justify-center bg-black/75 p-5" onclick="if(event.target === this) closeRemovalModal()">
+        <section role="dialog" aria-modal="true" aria-labelledby="pdp-removal-title" class="w-full max-w-lg bg-surface border border-edge rounded-2xl p-6 shadow-2xl">
+            <div class="flex items-start justify-between gap-4 mb-5">
+                <div><h2 id="pdp-removal-title" class="text-ice font-bold text-lg">Remove ingredients</h2><p class="text-xs text-frost mt-1">Choose how many portions to leave off.</p></div>
+                <button type="button" onclick="closeRemovalModal()" aria-label="Close" class="w-9 h-9 rounded-full bg-deep text-frost hover:text-ice"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="pdp-remove-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+            <button type="button" onclick="closeRemovalModal()" class="w-full mt-6 bg-ice text-void font-bold py-3 rounded-full">Done</button>
+        </section>
     </div>
 
     <!-- ===== ABOUT VIEW ===== -->
@@ -1015,6 +1021,7 @@
             FREE_SHIPPING_THRESHOLD: 500,
             SHIPPING_COST: 25,
             DELIVERY_AREA: 'Montana or Sinoville, Pretoria',
+            DISCORD_REVIEW_WEBHOOK: 'https://discord.com/api/webhooks/1552373975450128416/x6oOOPHJvBxpvkv31Nijcc6L_6CFpjZqFKj3l3HbGjYcpEqz2ZRg0oYGmtdmwsGY-ceR',
             DISCORD_CONTACT_WEBHOOK: 'https://discord.com/api/webhooks/1550443506353573919/gmFKxr54WnHmkuU_Hbxm5pzje_LEIZPxnIccJ-kpabTgbLBQOG4mjKvqzc0XYGuPeipc',
             DISCORD_ORDER_WEBHOOK: 'https://discord.com/api/webhooks/1550443506353573919/gmFKxr54WnHmkuU_Hbxm5pzje_LEIZPxnIccJ-kpabTgbLBQOG4mjKvqzc0XYGuPeipc'
         };
@@ -1258,6 +1265,30 @@
                     return `<div class="flex items-center justify-between gap-3 bg-deep border border-edge rounded-xl px-3 py-3 transition-colors" id="${id}-card"><span class="text-sm text-ice">${label}</span><div class="flex items-center gap-2"><button type="button" aria-label="Decrease ${label}" onclick="changeToppingAmount('${type}', '${key}', -1)" class="w-8 h-8 rounded-full border border-edge text-frost hover:text-ice hover:border-frost">−</button><span id="${id}-amount" class="w-5 text-center text-xs font-bold text-frost">0</span><button type="button" aria-label="Increase ${label}" onclick="changeToppingAmount('${type}', '${key}', 1)" class="w-8 h-8 rounded-full bg-slate text-ice hover:bg-neon">+</button></div></div>`;
                 }).join('');
             });
+            updateRemovalTrigger();
+        }
+
+        function openRemovalModal() {
+            const modal = document.getElementById('pdp-removal-modal');
+            modal.classList.remove('hidden');
+            modal.querySelector('button[aria-label="Close"]').focus();
+        }
+
+        function closeRemovalModal() {
+            document.getElementById('pdp-removal-modal').classList.add('hidden');
+            document.getElementById('pdp-removal-trigger').focus();
+        }
+
+        document.addEventListener('keydown', event => {
+            const modal = document.getElementById('pdp-removal-modal');
+            if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeRemovalModal();
+        });
+
+        function updateRemovalTrigger() {
+            const total = Object.values(pdpCustomizations.remove || {}).reduce((sum, amount) => sum + amount, 0);
+            document.getElementById('pdp-removal-trigger').textContent = total
+                ? `Remove ingredients · ${total} selected`
+                : 'Remove ingredients';
         }
 
         function changeToppingAmount(type, key, delta) {
@@ -1271,6 +1302,7 @@
             amountEl.classList.toggle('text-neon', amount > 0);
             amountEl.classList.toggle('text-frost', amount === 0);
             document.getElementById(`pdp-${type}-${index}-card`).classList.toggle('border-neon', amount > 0);
+            if (type === 'remove') updateRemovalTrigger();
         }
 
         function customizationText(customizations = {}) {
@@ -1894,7 +1926,7 @@
             button.disabled = true;
             status.textContent = 'Sending review…';
             try {
-                await notifyDiscord(CONFIG.DISCORD_CONTACT_WEBHOOK, '', [{
+                await notifyDiscord(CONFIG.DISCORD_REVIEW_WEBHOOK, '', [{
                     title: `Product review: ${product.name}`,
                     color: 4883199,
                     fields: [
