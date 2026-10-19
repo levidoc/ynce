@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You Not Cooking - Your Local Taste of Pretoria Montana</title>
+
+    <script src="https://embedded.varsitymarket.co.za/track/vm.analytics.js" data-store-id="3" defer></script>
+
+    <link rel="icon" type="image/png" href="assets/img/logo.jpg">
+
+    <meta name="description" content="At You Not Cooking, we understand the rhythm of life in Pretoria Montana—the hard work, the community spirit, and the need for a truly satisfying meal at the end of a long day. Nestled right here in our vibrant neighborhood, we believe that every bite should be an experience, a bold and hearty journey crafted especially for our local workers and residents. We're not just serving food; we're serving up comfort, convenience, and culinary adventures designed to make you say,
+        Why cook when you can eat your heart out with us? Our menu is built for the hungry, featuring signature dishes
+        like 'The Rolls Royce (Luxury)' and 'The G-Wagon (Heavy Duty) —more than just sandwiches, they are generous,
+        flavor-packed meals made with premium ingredients. From succulent beef patties and crispy bacon to double cheese
+        and savory Russian sausages, each item is a testament to our philosophy: go big, go bold, and never compromise
+        on taste or quality, right here in Pretoria Montana. We know you work hard, and you deserve a meal that works
+        just as hard for you. Whether you' re grabbing a quick, delicious bite during your workday or bringing home a
+        feast for the family after a busy day, You Not Cooking is your trusted local spot. Let us handle the cooking, so
+        you can focus on what matters most. Your only job is to Eat Your Heart Out.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://db.onlinewebfonts.com/c/11289a678c4607112a7ffdb6b86812c8?family=Druk+Wide+Cy+Bold+Regular"
+        rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#08090D',
+                        'deep': '#0E1117',
+                        'surface': '#161922',
+                        'edge': '#22262F',
+                        'slate': '#2D3340',
+                        'neon': '#4A90FF',
+                        'neon-soft': '#7DB4FF',
+                        'ice': '#EAECF0',
+                        'frost': '#8B8F9A',
+                        'warm': '#FF6B35',
+                    },
+                    fontFamily: {
+                        serif: ['Instrument Serif', 'Georgia', 'serif'],
+                        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #08090D;
+            color: #EAECF0;
+            font-family: 'DM Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-custom {
+            font-family: 'Druk Wide Cy Bold Regular', sans-serif !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #08090D;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #22262F;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4A90FF;
+        }
+
+        .view {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .view.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cart-drawer {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cart-drawer.open {
+            transform: translateX(0);
+        }
+
+        .modal-overlay {
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu-overlay {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 100;
+            top: 0;
+            left: 0;
+            background-color: rgba(8, 9, 13, 0.97);
+            overflow-x: hidden;
+            transition: 0.4s;
+            max-width: 100%;
+        }
+
+        .menu-overlay a {
+            padding: 8px 0;
+            text-decoration: none;
+            color: #8B8F9A;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .menu-overlay a:hover {
+            color: #EAECF0;
+        }
+
+        .marquee-track {
+            animation: scroll 25s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased">
+
+    <!-- MOBILE MENU OVERLAY -->
+    <div id="myNav" class="menu-overlay" style="width: 0%;">
+        <a class="text-3xl cursor-pointer flex justify-end p-6" onclick="closeMenu()">&times;</a>
+        <div class="flex flex-col items-center gap-6 pt-10">
+            <a href="#" onclick="closeMenu();navigate('home')" class="text-2xl font-serif font-custom">Home</a>
+            <a href="#" onclick="closeMenu();navigate('about')" class="text-2xl font-serif font-custom">About</a>
+            <a href="#" onclick="closeMenu();navigate('blog')" class="text-2xl font-serif font-custom">The Menu</a>
+            <a href="#" onclick="closeMenu();navigate('menu')" class="text-2xl font-serif font-custom">The Kitchen</a>
+            <a href="#" onclick="closeMenu();navigate('contact')" class="text-2xl font-serif font-custom">Contact</a>
+            <a href="#" onclick="closeMenu();navigate('account')" class="text-2xl font-serif font-custom">Account</a>
+            <p class="text-[9px] text-frost mt-16">Powered by VARSITYMARKET <span class="font-bold">technologies</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="fixed top-0 w-full z-50 border-b border-edge bg-void/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#/home/" class="logo"><img src="assets/img/logo.jpg" style="border-radius: 3rem; width: 5rem;"> </a>
+
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-frost">
+                <a href="#" onclick="navigate('about')" class="hover:text-ice transition-colors">About</a>
+                <a href="#" onclick="navigate('blog')" class="hover:text-ice transition-colors">The Menu</a>
+                <a href="#" onclick="navigate('menu')" class="hover:text-ice transition-colors">The Kitchen</a>
+                <a href="#" onclick="navigate('contact')" class="hover:text-ice transition-colors">Contact</a>
+            </div>
+
+            <div class="flex items-center gap-6 text-sm font-medium">
+                <a href="#" onclick="navigate('search')" class="text-frost hover:text-ice transition-colors">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </a>
+                <button onclick="handleAccountClick()" class="text-frost hover:text-ice transition-colors" aria-label="Account" title="Account">
+                    <i class="fa-solid fa-user text-lg"></i>
+                </button>
+                <a href="#" onclick="openMenu()" class="text-frost hover:text-ice transition-colors md:hidden">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </a>
+                <button onclick="toggleCart()" class="text-frost hover:text-ice transition-colors relative">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span id="cart-dot"
+                        class="absolute -top-1 -right-2 w-4 h-4 bg-neon text-void text-[10px] font-bold rounded-full items-center justify-center hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HOME VIEW ===== -->
+    <div id="view-home" class="view">
+        <!-- Hero -->
+        <header class="pt-40 pb-40 px-6 max-w-7xl mx-auto">
+            <div class="max-w-3xl">
+                <p class="text-xs font-bold uppercase tracking-[0.3em] text-frost mb-6">Montana's Local Kitchen
+                </p>
+                <h1 class=" text-6xl md:text-8xl lg:text-9xl leading-[0.9] text-ice mb-8 font-custom"
+                    style="width: max-content;">
+                    You Not<br> Cooking
+                </h1>
+                <p class="text-lg text-frost leading-relaxed max-w-lg mb-10">Proudly serving Pretoria Montana with bold,
+                    heavy-duty comfort food. Skip the kitchen and eat your heart out with You Not Cooking!</p>
+                <div class="flex gap-4">
+                    <button onclick="navigate('blog')"
+                        class="bg-ice text-void font-bold py-4 px-10 rounded-full hover:bg-frost transition-colors text-sm active:scale-[0.97]">See
+                        The Menu</button>
+                    <button onclick="navigate('contact')"
+                        class="border border-edge text-frost font-medium py-4 px-10 rounded-full hover:border-frost hover:text-ice transition-colors text-sm">Contact
+                        the kitchen</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Marquee -->
+        <div class="border-y border-edge pt-10 pb-6 overflow-hidden">
+            <div class="marquee-track whitespace-nowrap inline-flex">
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">KOTAS</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">FAST DELIVERY</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">MOUTHWATERING FOOD</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">YOUR NOT COOKING, WE ARE</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">DRIP SAUCES</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">LATE NIGHT MUNCHIES</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">KOTAS</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">MIDDAY MUNCHIES</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">CRAZY FOOD</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">KITCHEN MIA ?</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">DRIP SAUCES</span>
+                <span class="text-neon/50 mx-4">&#x2726;</span>
+                <span class="text-sm font-medium text-frost/40 tracking-widest mx-8">KITCHEN FOOD MIA ?</span>
+            </div>
+        </div>
+
+        <!-- Featured Items (API Powered) -->
+        <section class="max-w-7xl mx-auto px-6 py-24">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-[0.2em] text-frost mb-3">From The Kitchen</p>
+                    <h2 class="font-serif text-4xl md:text-5xl font-custom text-ice">What's Hot</h2>
+                </div>
+                <button onclick="navigate('menu')"
+                    class="text-sm font-medium text-frost hover:text-ice transition-colors">Full Menu &rarr;</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="home-featured">
+                <!-- Injected via JS from API -->
+            </div>
+        </section>
+
+        <!-- Story Teaser -->
+        <section class="max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16 items-center">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-frost mb-4">Our Story</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-custom text-ice mb-6 leading-tight">You Not Cooking</h2>
+                <p class="text-frost leading-relaxed mb-6">
+                    Based in Pretoria Montana, You Not Cooking is your go-to local spot for massive, premium meals like
+                    "The Rolls Royce" and "The G-Wagon." We handle the kitchen so hard-working residents and workers
+                    don't have to. Go big, go bold, and eat your heart out!
+
+                </p>
+                <button onclick="navigate('about')"
+                    class="text-sm font-medium text-ice underline underline-offset-4 hover:text-neon transition-colors">Read
+                    Our Full Story &rarr;</button>
+            </div>
+            <div class="rounded-2xl overflow-hidden border border-edge">
+                <img src="assets/img/logo.jpg" alt="Kitchen" class="w-full aspect-[4/3] object-cover">
+            </div>
+        </section>
+
+        <!-- Stats Strip -->
+        <section class="border-y border-edge">
+            <div class="max-w-7xl mx-auto px-6 py-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <p class="font-serif text-4xl font-custom text-ice">100+</p>
+                    <p class="text-frost text-xs mt-2">Customers Served</p>
+                </div>
+                <div>
+                    <p class="font-serif text-4xl font-custom text-ice">4.8</p>
+                    <p class="text-frost text-xs mt-2">Star Rating</p>
+                </div>
+                <div>
+                    <p class="font-serif text-4xl font-custom text-ice">6</p>
+                    <p class="text-frost text-xs mt-2">Signature Dishes</p>
+                </div>
+                <div>
+                    <p class="font-serif text-4xl font-custom text-ice">0</p>
+                    <p class="text-frost text-xs mt-2">Compromises Made</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews -->
+        <section class="max-w-7xl mx-auto px-6 py-24">
+            <div class="text-center mb-16">
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-frost mb-3">Testimonials</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-custom text-ice">Real Talk</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-surface border border-edge p-8 rounded-2xl">
+                    <div class="flex gap-1 text-neon mb-4">
+                        <i class="fa-solid fa-star text-xs"></i><i class="fa-solid fa-star text-xs"></i><i
+                            class="fa-solid fa-star text-xs"></i><i class="fa-solid fa-star text-xs"></i><i
+                            class="fa-solid fa-star text-xs"></i>
+                    </div>
+                    <p class="text-frost text-sm leading-relaxed mb-6">"This kota made me question every other kota
+                        I've ever had. The smash patty with that drip sauce is INSANE. I'm here twice a week now."</p>
+                    <p class="text-xs font-semibold text-ice">Lebo K. <span class="text-frost font-normal">&mdash; via
+                            Google</span></p>
+                </div>
+                <div class="bg-surface border border-edge p-8 rounded-2xl">
+                    <div class="flex gap-1 text-neon mb-4">
+                        <i class="fa-solid fa-star text-xs"></i><i class="fa-solid fa-star text-xs"></i><i
+                            class="fa-solid fa-star text-xs"></i><i class="fa-solid fa-star text-xs"></i><i
+                            class="fa-solid fa-star text-xs"></i>
+                    </div>
+                    <p class="text-frost text-sm leading-relaxed mb-6">"Ordered the Rolls Royce for content, stayed for
+                        the sauce. The Hot Chilli sauce actually made me cry but I couldn't stop eating. 10/10 pain."
+                    </p>
+                    <p class="text-xs font-semibold text-ice">Zanele M. <span class="text-frost font-normal">&mdash; via
+                            Instagram</span></p>
+                </div>
+                <div class="bg-surface border border-edge p-8 rounded-2xl">
+                    <div class="flex gap-1 text-neon mb-4">
+                        <i class="fa-solid fa-star text-xs"></i><i class="fa-solid fa-star text-xs"></i><i
+                            class="fa-solid fa-star text-xs"></i><i class="fa-solid fa-star text-xs"></i><i
+                            class="fa-solid fa-star text-xs"></i>
+                    </div>
+                    <p class="text-frost text-sm leading-relaxed mb-6">"Brother, All in all they're fire. Just a few
+                        pointers. A bit more sauces and spicing. Try to make the bread a more hallow. Overall, a great
+                        experience my g"
+                    </p>
+                    <p class="text-xs font-semibold text-ice">Tshepo S. <span class="text-frost font-normal">&mdash; via
+                            WhatsApp</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Merch CTA -->
+        <section class="border-y border-edge">
+            <div class="max-w-4xl mx-auto px-6 py-24 text-center">
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-frost mb-3">About Our Kitchen</p>
+                <h2 class="font-serif text-4xl md:text-6xl font-custom text-ice mb-6">Kitchen Drama?</h2>
+                <p class="text-frost text-lg max-w-xl mx-auto mb-10">Nestled in the heart of Pretoria Montana, You Not
+                    Cooking crafts bold, premium meals for our hard-working community. Skip the kitchen, grab our
+                    heavy-duty signatures like "The G-Wagon," and let us handle the cooking. Your only job is to eat
+                    your heart out!</p>
+                <button onclick="navigate('blog')"
+                    class="bg-ice text-void font-bold py-4 px-12 rounded-full hover:bg-frost transition-colors text-sm active:scale-[0.97]">Open
+                    Menu</button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ===== MENU VIEW ===== -->
+    <div id="view-menu" class="view hidden pt-40 pb-40 px-6 max-w-7xl mx-auto">
+        <h1 class="font-serif text-5xl md:text-7xl font-custom text-ice mb-4">The Menu</h1>
+        <p class="text-lg text-frost mb-12 max-w-2xl">Everything we're serving right now. No filler, no fluff &mdash;
+            just fire.</p>
+
+        <div class="flex gap-4 mb-12 overflow-x-auto pb-4 border-b border-edge" id="menu-filters">
+            <button onclick="filterMenu('all')" id="filter-all"
+                class="filter-btn text-ice font-bold border-b-2 border-ice pb-3 whitespace-nowrap">All Items</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12" id="menu-grid">
+            <!-- Injected via JS from API -->
+        </div>
+    </div>
+
+    <!-- ===== STORE VIEW ===== -->
+    <div id="view-store" class="view hidden pt-40 pb-40 px-6 max-w-7xl mx-auto">
+        <h1 class="font-serif text-5xl md:text-7xl font-custom text-ice mb-4">The Shop</h1>
+        <p class="text-lg text-frost mb-12 max-w-2xl">Merch, gear, and good taste. Limited drops, no restocks.</p>
+
+        <div class="flex gap-4 mb-12 overflow-x-auto pb-4 border-b border-edge" id="store-filters">
+            <button onclick="filterStore('all')"
+                class="store-filter-btn text-ice font-bold border-b-2 border-ice pb-3 whitespace-nowrap">All
+                Items</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12" id="store-grid">
+            <!-- Injected via JS -->
+        </div>
+    </div>
+
+    <!-- ===== PRODUCT VIEW ===== -->
+    <div id="view-product" class="view hidden pt-32 pb-40 px-6 max-w-7xl mx-auto">
+        <div class="flex items-center gap-6 mb-8 text-sm text-frost font-medium">
+            <a href="#" onclick="navigate(productReturnView || 'store')"
+                class="hover:text-ice transition-colors">Back</a>
+            <span>/</span>
+            <span class="text-ice" id="pdp-category">Item</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 mb-20">
+            <div class="bg-surface rounded-2xl overflow-hidden aspect-square border border-edge">
+                <img id="pdp-img" src="" class="w-full h-full object-cover">
+            </div>
+            <div class="flex flex-col justify-center">
+                <h1 id="pdp-name" class="font-serif text-4xl md:text-5xl font-custom text-ice mb-4">Product Name</h1>
+                <p id="pdp-price" class="text-2xl text-frost mb-8">R 0</p>
+                <div class="bg-surface border border-edge p-6 rounded-2xl mb-8">
+                    <div class="flex justify-between items-center mb-5">
+                        <div>
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-ice">Customize your order</h3>
+                            <p class="text-xs text-frost mt-1">Add toppings or remove ingredients.</p>
+                        </div>
+                        <i class="fa-solid fa-sliders text-neon"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-3"><p class="text-xs font-bold uppercase tracking-widest text-frost">Add toppings</p><span class="text-[10px] text-neon">R5 each</span></div>
+                        <div id="pdp-add-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                        <button id="pdp-removal-trigger" type="button" onclick="openRemovalModal()" class="mt-5 text-xs text-frost hover:text-ice underline underline-offset-4">Remove ingredients</button>
+                    </div>
+                </div>
+                <div class="mb-10">
+                    <p class="text-xs font-bold uppercase tracking-widest text-frost mb-3">Quantity</p>
+                    <div class="flex items-center gap-6 bg-deep w-max px-2 py-2 rounded-full border border-edge">
+                        <button onclick="changePdpQty(-1)"
+                            class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface transition-colors text-ice">
+                            <i class="fa-solid fa-minus text-xs"></i>
+                        </button>
+                        <span id="pdp-qty" class="text-lg font-bold text-ice w-4 text-center">1</span>
+                        <button onclick="changePdpQty(1)"
+                            class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface transition-colors text-ice">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <button id="pdp-add" onclick="addPdpToCart()"
+                    class="w-full bg-ice text-void font-bold py-5 rounded-full hover:bg-frost transition-colors active:scale-[0.98] mb-8">
+                    Add to Bag
+                </button>
+                <div class="bg-surface border border-edge p-8 rounded-2xl">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-ice mb-4">Details</h3>
+                    <p id="pdp-desc" class="text-frost leading-relaxed text-sm">...</p>
+                </div>
+                <div class="bg-surface border border-edge p-8 rounded-2xl mt-6">
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-ice">Leave a review</h3>
+                        <span class="text-neon text-xs">Sent to Adminss</span>
+                    </div>
+                    <div id="pdp-review-form" class="border-t border-edge pt-5">
+                        <p class="text-xs text-frost mb-3">Share your experience</p>
+                        <div class="flex gap-2 mb-3" role="radiogroup" aria-label="Rating">
+                            <label class="text-neon cursor-pointer"><input class="sr-only" type="radio" name="review-rating" value="5" checked> ★★★★★</label>
+                            <label class="text-frost cursor-pointer"><input class="sr-only" type="radio" name="review-rating" value="4"> 4 stars</label>
+                            <label class="text-frost cursor-pointer"><input class="sr-only" type="radio" name="review-rating" value="3"> 3 stars</label>
+                            <label class="text-frost cursor-pointer"><input class="sr-only" type="radio" name="review-rating" value="2"> 2 stars</label>
+                            <label class="text-frost cursor-pointer"><input class="sr-only" type="radio" name="review-rating" value="1"> 1 star</label>
+                        </div>
+                        <textarea id="review-text" rows="3" placeholder="What did you think?" class="w-full bg-deep border border-edge p-3 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm resize-none"></textarea>
+                        <button type="button" onclick="submitProductReview()" class="bg-ice text-void font-bold py-3 px-5 rounded-full mt-3 text-sm">Post Review</button>
+                        <p id="review-status" class="text-xs text-frost mt-3 min-h-4"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdp-removal-modal" class="hidden fixed inset-0 z-[120] flex items-center justify-center bg-black/75 p-5" onclick="if(event.target === this) closeRemovalModal()">
+        <section role="dialog" aria-modal="true" aria-labelledby="pdp-removal-title" class="w-full max-w-lg bg-surface border border-edge rounded-2xl p-6 shadow-2xl">
+            <div class="flex items-start justify-between gap-4 mb-5">
+                <div><h2 id="pdp-removal-title" class="text-ice font-bold text-lg">Remove ingredients</h2><p class="text-xs text-frost mt-1">Choose how many portions to leave off.</p></div>
+                <button type="button" onclick="closeRemovalModal()" aria-label="Close" class="w-9 h-9 rounded-full bg-deep text-frost hover:text-ice"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="pdp-remove-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+            <button type="button" onclick="closeRemovalModal()" class="w-full mt-6 bg-ice text-void font-bold py-3 rounded-full">Done</button>
+        </section>
+    </div>
+
+    <div id="order-confirmation-modal" class="hidden fixed inset-0 z-[130] flex items-center justify-center bg-black/75 p-5" onclick="if(event.target === this) closeOrderConfirmation()">
+        <section role="dialog" aria-modal="true" aria-labelledby="order-confirmation-title" class="w-full max-w-md bg-surface border border-edge rounded-3xl p-8 text-center shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-neon/15 text-neon flex items-center justify-center mx-auto mb-5"><i class="fa-solid fa-check text-2xl"></i></div>
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-neon mb-2">Order received</p>
+            <h2 id="order-confirmation-title" class="text-ice text-2xl font-bold mb-2">Your order is confirmed</h2>
+            <p class="text-frost text-sm mb-6">Estimated arrival time</p>
+            <div class="bg-deep border border-edge rounded-2xl p-5 mb-5">
+                <p id="order-confirmation-time" class="text-ice text-xl font-bold"></p>
+                <p class="text-frost text-xs mt-2">About 45 minutes from now</p>
+            </div>
+            <p id="order-confirmation-id" class="text-frost text-xs mb-6"></p>
+            <button type="button" onclick="closeOrderConfirmation()" class="w-full bg-ice text-void font-bold py-4 rounded-full">Got it</button>
+        </section>
+    </div>
+
+    <!-- ===== ABOUT VIEW ===== -->
+    <div id="view-about" class="view hidden pt-40 pb-40 px-6 max-w-4xl mx-auto">
+        <h1 class="font-serif text-5xl md:text-7xl font-custom text-ice mb-8">Our Story</h1>
+        <img src="assets/img/logo.jpg" class="w-full object-cover rounded-2xl mb-12 border border-edge">
+        <div class="space-y-6 text-lg text-frost leading-relaxed">
+            <p>At <strong class="text-ice">You Not Cooking</strong>, we understand the rhythm of life in Pretoria
+                Montana—the hard work, the community
+                spirit, and the need for a truly satisfying meal at the end of a long day. Nestled right here in our
+                vibrant neighborhood, we believe that every bite should be an experience, a bold and hearty journey
+                crafted especially for our local workers and residents. We're not just serving food; we're serving up
+                comfort, convenience, and culinary adventures designed to make you say, "Why cook when you can eat your
+                heart out with us?"<BR><BR>
+                Our menu is built for the hungry, featuring signature dishes like "The Rolls Royce (Luxury)" and "The
+                G-Wagon (Heavy Duty)"—more than just sandwiches, they are generous, flavor-packed meals made with
+                premium ingredients. From succulent beef patties and crispy bacon to double cheese and savory Russian
+                sausages, each item is a testament to our philosophy: go big, go bold, and never compromise on taste or
+                quality, right here in Pretoria Montana.<BR><BR>
+                We know you work hard, and you deserve a meal that works just as hard for you. Whether you're grabbing a
+                quick, delicious bite during your workday or bringing home a feast for the family after a busy day, You
+                Not Cooking is your trusted local spot. Let us handle the cooking, so you can focus on what matters
+                most. Your only job is to Eat Your Heart Out.<BR><BR>
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== BLOG VIEW ===== -->
+    <div id="view-blog" class="view hidden pt-40 pb-40 px-6 max-w-7xl mx-auto">
+        <h1 class="font-serif text-5xl md:text-7xl font-custom text-ice mb-4">The Menu</h1>
+        <p class="text-xl text-frost mb-16">Everything we're serving right now. No filler, no fluff — just fire.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="group cursor-pointer"  onclick="viewProduct('5', 'menu')">
+                <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
+                    <img src="assets/img/menu/menu_hilux.png"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                </div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-3" style="font-size: 1.2rem;">R
+                    52.00
+                </p>
+                <h2 class="text-2xl font-serif font-custom text-ice mb-3">The Hillax
+                    <p class="text-frost text-sm">(Rugged & Reliable)<br>Simple, Tough, and gets the job done. Full
+                        Russian and polony.</p>
+            </div>
+
+            <div class="group cursor-pointer" onclick="viewProduct('6', 'menu')">
+                <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
+                    <img src="assets/img/menu/menu_ferrari.png"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                </div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-3" style="font-size: 1.2rem;">R
+                    57.60
+                </p>
+                <h2 class="text-2xl font-serif font-custom text-ice mb-3">The Ferrari
+                    <p class="text-frost text-sm">(Speed & Spice)<br>Fast, fiery, and fully loaded with a full Russian
+                        , egg and cheese.</p>
+            </div>
+
+            <div class="group cursor-pointer" onclick="viewProduct('3', 'menu')">
+                <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
+                    <img src="assets/img/menu/menu_lamborghini.png"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                </div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-3" style="font-size: 1.2rem;">R
+                    58.60
+                </p>
+                <h2 class="text-2xl font-serif font-custom text-ice mb-3">The Lamborghini
+                    <p class="text-frost text-sm">(Exotics)<br>A bold combination of half Russian, crispy bacon, and
+                        spicy atchar.</p>
+            </div>
+
+            <div class="group cursor-pointer" onclick="viewProduct('4', 'menu')">
+                <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
+                    <img src="assets/img/menu/menu_g_wagon.png"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                </div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-3" style="font-size: 1.2rem;">R
+                    67.20
+                </p>
+                <h2 class="text-2xl font-serif font-custom text-ice mb-3">The G-Wagon
+                    <p class="text-frost text-sm">(Heavy Duty)<br>Built for the hungry. Double cheese, full russian and
+                        a beef patty. </p>
+            </div>
+
+            <div class="group cursor-pointer" onclick="viewProduct('1', 'menu')">
+                <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
+                    <img src="assets/img/menu/menu_rolls_royce.png"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                </div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-3" style="font-size: 1.2rem;">R
+                    61.60
+                </p>
+                <h2 class="text-2xl font-serif font-custom text-ice mb-3">Rolls Royce
+                    <p class="text-frost text-sm">(Luxury)<br>The ultimate luxury experience with a beef patty,
+                        bacon, and all the trimmings.</p>
+            </div>
+
+
+            <div class="group cursor-pointer" onclick="viewProduct('2', 'menu')">
+                <div class="bg-surface rounded-2xl overflow-hidden mb-6 border border-edge">
+                    <img src="assets/img/menu/menu_vw_polo.png"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                </div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-3" style="font-size: 1.2rem;">R
+                    34.60
+                </p>
+                <h2 class="text-2xl font-serif font-custom text-ice mb-3">The VW Polo
+                    <p class="text-frost text-sm">(The People's Choice)<br>
+                        Reliable, classic, and loved by everyone.<br> Double Polony, egg and cheese.</p>
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <!-- ===== CONTACT VIEW ===== -->
+    <div id="view-contact" class="view hidden pt-40 pb-40 px-6 max-w-4xl mx-auto">
+        <h1 class="font-serif text-5xl md:text-7xl font-custom text-ice mb-4">Get In Touch</h1>
+        <p class="text-xl text-frost mb-12">Pull up, call, or slide into our DMs.</p>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            <div class="space-y-8">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Location</p>
+                    <p class="text-ice">973 klippan street, Montana<br>Pretoria, 0182</p>
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Hours</p>
+                    <p class="text-ice">Mon - Fri: 10AM - 6PM<br>
+                        Sat - Sun:
+                        Closed</p>
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Phone / WhatsApp</p>
+                    <p class="text-ice">+27738827018</p>
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Email</p>
+                    <p class="text-ice">info@ynce.co.za</p>
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Delivery</p>
+                    <p class="text-ice">Montana or Sinoville, Pretoria<br>R25 flat fee</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleContactSubmit(event)"
+                class="bg-surface border border-edge p-8 rounded-2xl space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="contact-name" required placeholder="Name"
+                        class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm">
+                    <input type="tel" id="contact-phone" placeholder="Phone"
+                        class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm">
+                </div>
+                <input type="email" id="contact-email" required placeholder="Email"
+                    class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm">
+                <select id="contact-subject"
+                    class="w-full bg-deep border border-edge p-4 rounded-xl text-frost outline-none focus:border-frost transition-colors text-sm">
+                    <option>General Inquiry</option>
+                    <option>Order Support</option>
+                    <option>Press & Media</option>
+                    <option>Feedback</option>
+                </select>
+                <textarea id="contact-message" rows="5" required placeholder="Your message..."
+                    class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm resize-none"></textarea>
+                <button id="contact-submit"
+                    class="w-full bg-ice text-void font-bold py-4 rounded-full hover:bg-frost transition-colors text-sm active:scale-[0.98]">Send
+                    Message</button>
+                <p id="contact-status" class="text-xs text-frost min-h-5"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== FAQ VIEW ===== -->
+    <div id="view-faq" class="view hidden pt-40 pb-40 px-6 max-w-3xl mx-auto">
+        <h1 class="font-serif text-5xl font-custom text-ice mb-12">FAQ</h1>
+        <div class="space-y-4">
+            <div class="bg-surface border border-edge p-8 rounded-2xl">
+                <h3 class="text-lg font-bold text-ice mb-2">What are your hours?</h3>
+                <p class="text-frost text-sm">Tue-Thu 11AM-10PM, Fri-Sat 11AM-1AM, Sun 12PM-8PM. Monday we rest.</p>
+            </div>
+            <div class="bg-surface border border-edge p-8 rounded-2xl">
+                <h3 class="text-lg font-bold text-ice mb-2">Do you deliver?</h3>
+                <p class="text-frost text-sm">Yes. Direct delivery is currently available in Montana or Sinoville, Pretoria,
+                    with a R25 flat delivery fee.</p>
+            </div>
+            <div class="bg-surface border border-edge p-8 rounded-2xl">
+                <h3 class="text-lg font-bold text-ice mb-2">Can I book for a private event?</h3>
+                <p class="text-frost text-sm">Absolutely. Contact us for a custom quote.
+                </p>
+            </div>
+            <div class="bg-surface border border-edge p-8 rounded-2xl">
+                <h3 class="text-lg font-bold text-ice mb-2">How spicy is "The Regret" sauce?</h3>
+                <p class="text-frost text-sm">Very. It's Carolina Reaper-based. We're not responsible for tears,
+                    existential crises, or aggressive WhatsApp messages sent afterwards.</p>
+            </div>
+            <div class="bg-surface border border-edge p-8 rounded-2xl">
+                <h3 class="text-lg font-bold text-ice mb-2">Do you do merch returns?</h3>
+                <p class="text-frost text-sm">Returns accepted within 14 days, unworn, with tags. No returns on food
+                    (obviously).</p>
+            </div>
+            <div class="bg-surface border border-edge p-8 rounded-2xl">
+                <h3 class="text-lg font-bold text-ice mb-2">Do you have vegan options?</h3>
+                <p class="text-frost text-sm">We have a plant-based smash patty and vegan-friendly loaded fries. Ask
+                    your server for the full list.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== POLICIES VIEW ===== -->
+    <div id="view-policies" class="view hidden pt-40 pb-40 px-6 max-w-4xl mx-auto">
+        <h1 class="font-serif text-5xl font-custom text-ice mb-12">Legal Policies</h1>
+        <div class="space-y-12 text-frost">
+            <section class="bg-surface p-10 rounded-2xl border border-edge space-y-4">
+                <h2 class="text-2xl font-bold text-ice">Terms of Service</h2>
+                <p>By ordering from We Dont Eats, you agree that our food is dangerously good and that we bear no
+                    responsibility for cravings, repeat visits, or sauce-stained clothing.</p>
+                <p>All content, branding, and recipes are the intellectual property of We Dont Eats. Unauthorized
+                    reproduction is strictly prohibited.</p>
+            </section>
+            <section class="bg-surface p-10 rounded-2xl border border-edge space-y-4">
+                <h2 class="text-2xl font-bold text-ice">Privacy Policy</h2>
+                <p>We collect only the information needed to process your order and improve your experience. Your data
+                    stays with us. We don't sell it, share it, or do anything weird with it.</p>
+            </section>
+            <section class="bg-surface p-10 rounded-2xl border border-edge space-y-4">
+                <h2 class="text-2xl font-bold text-ice">Refund Policy</h2>
+                <p>Merch returns within 14 days, unworn, original packaging. Food orders are final once prepared. If
+                    something's wrong with your order, WhatsApp us and we'll make it right.</p>
+            </section>
+        </div>
+    </div>
+
+    <!-- ===== ACCOUNT VIEW ===== -->
+    <div id="view-account" class="view hidden pt-40 pb-40 px-6 max-w-lg mx-auto text-center">
+        <h1 class="font-serif text-5xl font-custom text-ice mb-4">Welcome</h1>
+        <p class="text-frost mb-10">Use your account to order again and follow every delivery.</p>
+        <div class="bg-surface border border-edge p-8 rounded-2xl">
+            <div class="flex gap-4 border-b border-edge mb-6">
+                <button id="login-tab" onclick="setAccountMode('login')" class="text-ice font-bold border-b-2 border-ice pb-3 text-sm">Sign In</button>
+                <button id="register-tab" onclick="setAccountMode('register')" class="text-frost pb-3 text-sm">Create Account</button>
+            </div>
+            <input type="text" id="account-name" placeholder="Full Name" class="hidden w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors mb-4 text-sm">
+            <input type="email" id="login-email" placeholder="Email Address"
+                class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors mb-4 text-sm">
+            <input type="password" id="login-password" placeholder="Password" minlength="8" required
+                class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors mb-4 text-sm">
+            <button id="account-submit" onclick="handleAccountSubmit()"
+                class="w-full bg-ice text-void font-bold py-4 rounded-full hover:bg-frost transition-colors mb-4 text-sm active:scale-[0.98]">Sign In</button>
+            <p id="account-message" class="text-xs text-frost min-h-5"></p>
+        </div>
+    </div>
+
+    <!-- ===== DASHBOARD VIEW ===== -->
+    <div id="view-dashboard" class="view hidden pt-40 pb-40 px-6 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 border-b border-edge pb-8">
+            <div>
+                <h1 class="font-serif text-4xl md:text-6xl font-custom text-ice mb-2">Welcome back.</h1>
+                <p class="text-xl text-frost" id="dash-email">guest</p>
+            </div>
+            <button onclick="handleLogout()"
+                class="text-sm font-semibold uppercase tracking-widest text-frost hover:text-ice mt-4 md:mt-0">Sign
+                Out</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            <div class="bg-surface border border-edge p-8 rounded-2xl">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-frost mb-2">Orders</p>
+                <p class="font-serif text-4xl font-custom text-ice" id="dash-orders">0</p>
+            </div>
+            <div class="bg-surface border border-edge p-8 rounded-2xl">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-frost mb-2">Total Spent</p>
+                <p class="font-serif text-4xl font-custom text-ice" id="dash-spent">R 0</p>
+            </div>
+            <div class="bg-surface border border-edge p-8 rounded-2xl">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-frost mb-2">Status</p>
+                <p class="font-serif text-4xl font-custom text-ice">Regular</p>
+            </div>
+        </div>
+        <div class="flex justify-between items-end mb-6">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Your orders</p>
+                <h2 class="font-serif text-3xl font-custom text-ice">Order history</h2>
+            </div>
+            <button onclick="loadAccountOrders()" class="text-sm text-frost hover:text-ice">Refresh</button>
+        </div>
+        <div id="dash-orders-list" class="space-y-4 mb-16">
+            <p class="text-frost">Loading orders...</p>
+        </div>
+        <div class="bg-surface border border-edge p-8 rounded-2xl">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-frost mb-6">Quick Links</h3>
+            <div class="space-y-3">
+                <a href="#" onclick="navigate('menu')"
+                    class="block text-sm text-frost hover:text-ice transition-colors">Browse Menu</a>
+                <a href="#" onclick="navigate('store')"
+                    class="block text-sm text-frost hover:text-ice transition-colors">Shop Merch</a>
+                <a href="#" onclick="navigate('contact')"
+                    class="block text-sm text-frost hover:text-ice transition-colors">Contact Support</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SEARCH VIEW ===== -->
+    <div id="view-search" class="view hidden pt-32 pb-40 px-6 max-w-7xl mx-auto">
+        <div class="max-w-3xl mx-auto mb-16">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-6 top-6 text-frost"></i>
+                <input type="text" id="search-input" onkeyup="handleSearchInput()" placeholder="Search products..."
+                    class="w-full bg-surface border border-edge py-6 pl-16 pr-6 rounded-2xl text-2xl text-ice outline-none focus:border-frost transition-colors">
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="search-results">
+            <!-- Injected via JS -->
+        </div>
+    </div>
+
+    <!-- ===== 404 VIEW ===== -->
+    <div id="view-404"
+        class="view hidden pt-40 pb-40 px-6 max-w-2xl mx-auto text-center h-[70vh] flex flex-col justify-center items-center">
+        <h1 class="font-serif text-9xl font-custom text-edge mb-4">404</h1>
+        <h2 class="text-3xl font-bold text-ice mb-6">Nothing here, chef.</h2>
+        <p class="text-frost mb-10">The page you're looking for doesn't exist. Maybe it got eaten.</p>
+        <button onclick="navigate('home')"
+            class="bg-ice text-void font-bold py-4 px-10 rounded-full hover:bg-frost transition-colors text-sm">Go
+            Home</button>
+    </div>
+
+    <!-- ===== CART DRAWER ===== -->
+    <div id="drawer-overlay" onclick="toggleCart()"
+        class="fixed inset-0 bg-black/60 z-[60] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <div id="cart-drawer"
+        class="cart-drawer fixed top-0 right-0 h-full w-full md:w-[450px] bg-void border-l border-edge z-[70] flex flex-col">
+        <div class="p-6 border-b border-edge flex justify-between items-center bg-surface">
+            <h2 class="text-xl font-serif font-custom text-ice">Your Bag</h2>
+            <button onclick="toggleCart()" class="text-frost hover:text-ice"><i
+                    class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+
+        <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-6">
+            <!-- Injected via JS -->
+        </div>
+
+        <div class="p-6 border-t border-edge bg-surface space-y-4">
+            <div class="flex border border-edge rounded-xl overflow-hidden mb-4">
+                <input type="text" id="discount-code" placeholder="Discount Code"
+                    class="w-full bg-deep px-4 py-3 text-sm text-ice outline-none uppercase">
+                <button onclick="applyDiscount()"
+                    class="bg-edge text-ice px-4 text-xs font-bold uppercase tracking-widest hover:bg-ice hover:text-void transition-colors">Apply</button>
+            </div>
+            <div class="space-y-2 text-sm text-frost border-b border-edge pb-4 mb-4">
+                <div class="flex justify-between"><span>Subtotal</span><span id="subtotal" class="text-ice">R 0</span>
+                </div>
+                <div class="flex justify-between"><span>Toppings</span><span id="cart-topping-total" class="text-ice">R 0</span></div>
+                <div class="flex justify-between hidden" id="discount-row"><span class="text-neon">Discount (<span
+                            id="discount-label"></span>)</span><span class="text-neon" id="discount-amount">-R 0</span>
+                </div>
+                <div class="flex justify-between"><span>Shipping</span><span class="text-ice">Calculated at
+                        checkout</span></div>
+            </div>
+            <div class="flex justify-between items-center text-lg font-bold text-ice mb-6">
+                <span>Total</span><span id="cart-total">R 0</span>
+            </div>
+            <button onclick="openCheckout()"
+                class="w-full bg-ice text-void font-bold py-4 rounded-full transition-colors active:scale-[0.98]">Check
+                Out</button>
+        </div>
+    </div>
+
+    <!-- ===== CHECKOUT MODAL ===== -->
+    <div id="checkout-modal"
+        class="modal-overlay fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 overflow-y-auto">
+        <div class="bg-void border border-edge w-full max-w-2xl rounded-2xl p-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-10">
+                <div>
+                    <h2 class="font-serif text-3xl font-custom text-ice mb-2">Checkout</h2>
+                    <p class="text-frost text-sm">Signed-in checkout</p>
+                </div>
+                <button onclick="closeCheckout()" class="text-frost hover:text-ice"><i
+                        class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mb-8 text-center text-xs uppercase tracking-widest">
+                <button type="button" id="checkout-step-label-1" class="text-ice border-b-2 border-ice pb-3">1. Billing</button>
+                <button type="button" id="checkout-step-label-2" class="text-frost border-b-2 border-transparent pb-3">2. Delivery</button>
+                <button type="button" id="checkout-step-label-3" class="text-frost border-b-2 border-transparent pb-3">3. Payment</button>
+            </div>
+
+            <form onsubmit="handleCheckout(event)" class="space-y-6">
+                <section id="checkout-step-1" class="checkout-step">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-frost mb-3">Contact</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="co-name" required placeholder="Full Name"
+                            class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm">
+                        <input type="email" id="co-email" required placeholder="Email"
+                            class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm">
+                    </div>
+                    <button type="button" onclick="nextCheckoutStep(2)" class="w-full bg-ice text-void font-bold py-4 rounded-full mt-6">Continue to Delivery</button>
+                </section>
+                <section id="checkout-step-2" class="checkout-step hidden">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-frost mb-3">Delivery</label>
+                    <input type="tel" id="co-phone" required placeholder="Phone Number"
+                        class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors mb-4 text-sm">
+                    <input type="text" id="co-street" required placeholder="Street address and number"
+                        class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors mb-4 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <input type="text" id="co-zone" required placeholder="Zone / suburb e.g. Montana"
+                            class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm">
+                        <input type="text" id="co-city" required value="Pretoria" placeholder="City"
+                            class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm">
+                        <input type="text" id="co-province" required value="Gauteng" placeholder="Province"
+                            class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm">
+                        <input type="text" id="co-postal-code" required inputmode="numeric" placeholder="Postal code"
+                            class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm">
+                    </div>
+                    <textarea id="co-notes" rows="2" placeholder="Delivery notes (optional)"
+                        class="w-full bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm resize-none"></textarea>
+                    <p class="text-xs text-frost mt-2">Direct delivery is currently available in Montana or Sinoville, Pretoria.</p>
+                    <div class="flex gap-3 mt-6"><button type="button" onclick="nextCheckoutStep(1)" class="flex-1 border border-edge text-frost font-bold py-4 rounded-full">Back</button><button type="button" onclick="nextCheckoutStep(3)" class="flex-1 bg-ice text-void font-bold py-4 rounded-full">Continue to Payment</button></div>
+                </section>
+                <section id="checkout-step-3" class="checkout-step hidden">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-frost mb-3">Payment</label>
+                    <div class="border border-edge rounded-xl p-5 mb-6 text-ice"><i class="fa-solid fa-money-bill-wave mr-2 text-neon"></i>Cash on delivery</div>
+
+                    <div class="border border-edge rounded-xl p-5 mb-6">
+                        <label for="co-referral-code" class="block text-xs font-bold uppercase tracking-widest text-frost mb-3">Affiliate code <span class="text-frost/60 normal-case tracking-normal">(optional)</span></label>
+                        <div class="flex gap-2">
+                            <input type="text" id="co-referral-code" placeholder="Enter code" autocomplete="off" class="flex-1 bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm uppercase">
+                        </div>
+                        <p id="co-referral-status" class="text-xs text-frost mt-2 min-h-4">Have an affiliate code? Add it here.</p>
+                    </div>
+
+                    <div class="border-t border-edge pt-6 space-y-2 text-sm">
+                    <div class="flex justify-between text-frost"><span>Subtotal</span><span id="co-subtotal"
+                            class="text-ice">R 0</span></div>
+                        <div class="flex justify-between text-frost"><span>Toppings</span><span id="co-toppings" class="text-ice">R 0</span></div>
+                        <div class="flex justify-between text-frost"><span>Shipping</span><span id="co-shipping"
+                            class="text-ice">R 25</span></div>
+                        <div class="border-t border-edge pt-3 mt-3"><p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Toppings and changes</p><div id="co-customizations" class="text-xs text-ice space-y-1"><p>No changes selected.</p></div></div>
+                    <div class="flex justify-between hidden" id="co-discount-row"><span
+                            class="text-neon">Discount</span><span class="text-neon" id="co-discount">-R 0</span></div>
+                    <div class="flex justify-between text-lg font-bold text-ice pt-4 border-t border-edge">
+                        <span>Total</span><span id="co-total">R 0</span>
+                    </div>
+                    </div>
+
+                    <div class="flex gap-3 mt-6"><button type="button" onclick="nextCheckoutStep(2)" class="flex-1 border border-edge text-frost font-bold py-4 rounded-full">Back</button><button id="checkout-submit" class="flex-1 bg-ice text-void font-bold py-5 rounded-full hover:bg-frost transition-colors active:scale-[0.98] text-sm">Place Cash Order</button></div>
+                    <p id="checkout-payment-status" class="text-xs text-frost min-h-5 mt-3"></p>
+                </section>
+            </form>
+        </div>
+    </div>
+
+    <footer class="border-t border-edge py-16 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div>
+                <p class="font-serif text-2xl font-custom text-ice mb-4">You Not Cooking</p>
+                <p class="text-frost text-sm leading-relaxed">'You Not Cooking' brings bold, hearty meals to Pretoria
+                    Montana. From our signature "Rolls Royce" to "The G-Wagon," we serve up premium, flavor-packed
+                    comfort food for hard-working locals. Why cook when you can eat your heart out with us?</p>
+            </div>
+            <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-4">Navigate</p>
+                <div class="space-y-2">
+                    <a href="#" onclick="navigate('account')"
+                        class="block text-sm text-frost hover:text-ice transition-colors">Account</a>
+                    <a href="#" onclick="navigate('store')"
+                        class="block text-sm text-frost hover:text-ice transition-colors">The Kitchen</a>
+                    <a href="#" onclick="navigate('blog')"
+                        class="block text-sm text-frost hover:text-ice transition-colors">The Menu</a>
+                </div>
+            </div>
+            <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-4">Info</p>
+                <div class="space-y-2">
+                    <a href="#" onclick="navigate('about')"
+                        class="block text-sm text-frost hover:text-ice transition-colors">About</a>
+                    <a href="#" onclick="navigate('contact')"
+                        class="block text-sm text-frost hover:text-ice transition-colors">Contact</a>
+                    <a href="#" onclick="navigate('faq')"
+                        class="block text-sm text-frost hover:text-ice transition-colors">FAQ</a>
+                    <a href="#" onclick="navigate('policies')"
+                        class="block text-sm text-frost hover:text-ice transition-colors">Policies</a>
+                </div>
+            </div>
+            <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-frost mb-4">Social</p>
+                <div class="flex gap-3">
+                    <a href="https://www.instagram.com/yournotcookingeats/?utm_source=ig_web_button_share_sheet"
+                        class="w-10 h-10 rounded-full border border-edge flex items-center justify-center text-frost hover:text-ice hover:border-frost transition-colors"><i
+                            class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@your.not.cooking?is_from_webapp=1&sender_device=pc"
+                        class="w-10 h-10 rounded-full border border-edge flex items-center justify-center text-frost hover:text-ice hover:border-frost transition-colors"><i
+                            class="fa-brands fa-tiktok"></i></a>
+                    <a href="ttps://www.facebook.com/share/1ERt3Fpnj8/?mibextid=wwXIfr"
+                        class="w-10 h-10 rounded-full border border-edge flex items-center justify-center text-frost hover:text-ice hover:border-frost transition-colors"><i
+                            class="fa-brands fa-facebook"></i></a>
+                    <a href="tel:+27738827018"
+                        class="w-10 h-10 rounded-full border border-edge flex items-center justify-center text-frost hover:text-ice hover:border-frost transition-colors"><i
+                            class="fa-brands fa-whatsapp"></i></a>
+                </div>
+                <p class="text-frost/40 text-xs mt-6">&copy; 2026 You Not Cooking. All rights reserved.</p>
+            </div>
+        </div>
+
+        <p class="text-frost/40 text-xs mt-6 text-center">Powered by <span class="text-white">VARSITYMARKET</span>
+            technologies</p>
+    </footer>
+
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        /**
+         * We Dont Eats - Store Engine Integration
+         * Powered by VM Embedded Store Engine API
+         */
+        const CONFIG = {
+            API_BASE: 'https://gigs.varsitymarket.co.za/store-access',
+            // Referral Worker settings. Replace both values before publishing.
+            REFERRAL_API_BASE: 'https://animehood0access0point.levidoc00.workers.dev/',
+            REFERRAL_API_TOKEN: 'change-this-checkout-token',
+            STORE_ID: '2',
+            API_KEY: 'vm_live_61c16be5a975a49380c11207e1c7802b17c3b0a6564daa97',
+            STORE_NAME: 'We Dont Eats',
+            CURRENCY: 'R',
+            FREE_SHIPPING_THRESHOLD: 500,
+            SHIPPING_COST: 25,
+            DELIVERY_AREA: 'Montana or Sinoville, Pretoria',
+            DISCORD_REVIEW_WEBHOOK: 'https://discord.com/api/webhooks/1552373975450128416/x6oOOPHJvBxpvkv31Nijcc6L_6CFpjZqFKj3l3HbGjYcpEqz2ZRg0oYGmtdmwsGY-ceR',
+            DISCORD_CONTACT_WEBHOOK: 'https://discord.com/api/webhooks/1550443506353573919/gmFKxr54WnHmkuU_Hbxm5pzje_LEIZPxnIccJ-kpabTgbLBQOG4mjKvqzc0XYGuPeipc',
+            DISCORD_ORDER_WEBHOOK: 'https://discord.com/api/webhooks/1550443506353573919/gmFKxr54WnHmkuU_Hbxm5pzje_LEIZPxnIccJ-kpabTgbLBQOG4mjKvqzc0XYGuPeipc'
+        };
+
+        // API
+        const api = {
+            _co: null,
+            isCrossOrigin() {
+                if (this._co === null) { try { this._co = new URL(CONFIG.API_BASE).origin !== window.location.origin; } catch { this._co = false; } }
+                return this._co;
+            },
+            buildUrl(ep, params = {}) {
+                const base = new URL(CONFIG.API_BASE + '/');
+                base.pathname = `${base.pathname.replace(/\/+$/, '')}/${CONFIG.STORE_ID}/`;
+                const url = base;
+                url.searchParams.set('state', ep);
+                url.searchParams.set('api_key', CONFIG.API_KEY);
+                Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+                return url.toString();
+            },
+            async request(url, options = {}) {
+                const response = await fetch(url, options);
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok || data.success === false) {
+                    const details = data.details || data.errors || data.hint;
+                    const detailText = details ? `: ${typeof details === 'string' ? details : JSON.stringify(details)}` : '';
+                    const message = `${data.error || data.message || `Request failed (${response.status})`}${detailText}`;
+                    throw new Error(`${message} [${response.status}]`);
+                }
+                return data;
+            },
+            async get(ep, params = {}) {
+                const headers = { 'X-API-Key': CONFIG.API_KEY };
+                if (userSession?.token) headers.Authorization = `Bearer ${userSession.token}`;
+                return this.request(this.buildUrl(ep, params), { headers });
+            },
+            async post(ep, body = {}) {
+                const headers = { 'Content-Type': 'application/json', 'X-API-Key': CONFIG.API_KEY };
+                if (userSession?.token) headers.Authorization = `Bearer ${userSession.token}`;
+                return this.request(this.buildUrl(ep), {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(body)
+                });
+            },
+            async getProducts(p = {}) { const d = await this.get('products', { limit: '50', ...p }); return d.success ? d.data : []; },
+            async getProduct(id) { const d = await this.get('product', { id }); return d.success ? d.data : null; },
+            async getCategories() { const d = await this.get('categories'); return d.success ? d.data : []; },
+            async searchProducts(q) { const d = await this.get('search', { q }); return d.success ? d.data : []; },
+            async getOrders(email) { const d = await this.get('orders', { email }); return d.success ? d.data : []; },
+            async getPaymentMethods() { const d = await this.get('payment_methods'); return d.success ? d.data : []; },
+            async registerAccount(details) {
+                return this.post('customer_register', details);
+            },
+            async loginAccount(credentials) {
+                return this.post('customer_login', credentials);
+            },
+            async createCart() { const d = await this.post('cart_create'); return d.success ? d.data : null; },
+            async getCart(cid) { const d = await this.get('cart', { cart_id: cid }); return d.success ? d.data : null; },
+            async addToCart(cid, pid, qty = 1, customizations = {}) { return this.post('cart_add', { cart_id: cid, product_id: pid, quantity: qty, customizations }); },
+            async updateCart(cid, pid, qty) { return this.post('cart_update', { cart_id: cid, product_id: pid, quantity: qty }); },
+            async removeFromCart(cid, pid) { return this.post('cart_remove', { cart_id: cid, product_id: pid }); },
+            async createCheckout(details) { return this.post('checkout_create', details); },
+            async completeCheckout(details) { return this.post('checkout_complete', details); },
+            async placeOrder(d) { return this.post('order', d); },
+            async createCashCheckout(d) { return this.post('checkout_create', d); }
+        };
+
+        // STATE
+        const CACHE_KEYS = {
+            products: 'ynce_products_v1',
+            categories: 'ynce_categories_v1',
+            orders: 'ynce_orders_v1',
+            confirmations: 'ynce_order_confirmations_v1',
+            reviews: 'ynce_reviews_v1'
+        };
+        const ORDER_RETENTION_DAYS = 365;
+        const ORDER_RETENTION_MS = ORDER_RETENTION_DAYS * 24 * 60 * 60 * 1000;
+        const TOPPING_PRICE = 5;
+        let PRODUCTS = [], CATEGORIES = [];
+        let cartData = { items: [], item_count: 0, subtotal: 0 };
+        let cartId = localStorage.getItem('vm_cart_id') || null;
+        let currentDiscount = null;
+        let pdpQty = 1;
+        let productReturnView = 'store';
+        let userSession = JSON.parse(localStorage.getItem('wde_session')) || null;
+        let searchTimeout = null;
+        let checkoutStep = 1;
+        let accountOrders = [];
+        const paymentMethod = 'cod';
+        const TOPPING_OPTIONS = {
+            remove: ['Cheese', 'Atchar', 'Egg', 'Bacon', 'Russian', 'Polony'],
+            add: ['Extra cheese', 'Extra bacon', 'Extra egg', 'Extra atchar']
+        };
+        let pdpCustomizations = { add: {}, remove: [] };
+        let cartCustomizations = readCache('ynce_cart_customizations_v1', {});
+
+        function readCache(key, fallback = []) {
+            try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; }
+        }
+
+        function writeCache(key, value) {
+            try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.warn('Catalog cache unavailable:', e); }
+        }
+
+        function getStoredOrders() {
+            const orders = readCache(CACHE_KEYS.orders, {});
+            if (!userSession?.email) return [];
+            const email = userSession.email.toLowerCase();
+            const now = Date.now();
+            const storedOrders = Array.isArray(orders[email]) ? orders[email] : [];
+            const retainedOrders = storedOrders.filter(order => {
+                const savedAt = Date.parse(order.saved_at || order.created_at || '');
+                return Number.isNaN(savedAt) || now - savedAt <= ORDER_RETENTION_MS;
+            });
+            if (retainedOrders.length !== storedOrders.length) {
+                orders[email] = retainedOrders;
+                writeCache(CACHE_KEYS.orders, orders);
+            }
+            return retainedOrders;
+        }
+
+        function storeOrder(order) {
+            if (!userSession?.email || !order) return;
+            const orders = readCache(CACHE_KEYS.orders, {});
+            const email = userSession.email.toLowerCase();
+            const savedOrder = { ...order, saved_at: order.saved_at || new Date().toISOString() };
+            const orderId = savedOrder.id || savedOrder.order_id || savedOrder.local_order_id;
+            orders[email] = Array.isArray(orders[email]) ? orders[email] : [];
+            if (!orderId || !orders[email].some(item => String(item.id || item.order_id || item.local_order_id) === String(orderId))) {
+                orders[email].unshift(savedOrder);
+            }
+            orders[email] = orders[email].filter(item => {
+                const savedAt = Date.parse(item.saved_at || item.created_at || '');
+                return Number.isNaN(savedAt) || Date.now() - savedAt <= ORDER_RETENTION_MS;
+            });
+            writeCache(CACHE_KEYS.orders, orders);
+        }
+
+        function getOrderKey(order) {
+            return String(order.id || order.order_id || order.local_order_id || order.created_at || 'unknown');
+        }
+
+        function getOrderConfirmation(order) {
+            const confirmations = readCache(CACHE_KEYS.confirmations, {});
+            const email = userSession?.email?.toLowerCase();
+            return email ? confirmations[email]?.[getOrderKey(order)] : null;
+        }
+
+        async function confirmOrderReceived(orderKey) {
+            if (!userSession?.email) return;
+            const order = accountOrders.find(item => getOrderKey(item) === String(orderKey));
+            if (!order) return;
+            const confirmedAt = new Date().toISOString();
+            try {
+                await notifyDiscord(CONFIG.DISCORD_ORDER_WEBHOOK, '', [{
+                    title: 'Customer confirmed order received',
+                    color: 65280,
+                    fields: [
+                        { name: 'Customer', value: userSession.name || userSession.email, inline: true },
+                        { name: 'Email', value: userSession.email, inline: true },
+                        { name: 'Order', value: getOrderKey(order), inline: true },
+                        { name: 'Confirmed at', value: confirmedAt, inline: true }
+                    ],
+                    timestamp: confirmedAt
+                }]);
+                const confirmations = readCache(CACHE_KEYS.confirmations, {});
+                const email = userSession.email.toLowerCase();
+                confirmations[email] = confirmations[email] || {};
+                confirmations[email][getOrderKey(order)] = confirmedAt;
+                writeCache(CACHE_KEYS.confirmations, confirmations);
+                renderAccountOrders(accountOrders);
+            } catch (error) {
+                console.error('Order confirmation webhook error:', error);
+                alert('We could not send the confirmation. Please try again.');
+            }
+        }
+
+        async function notifyDiscord(webhookUrl, content, embeds = []) {
+            if (!webhookUrl) {
+                console.warn('Discord webhook is not configured.');
+                return false;
+            }
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, embeds })
+            });
+            if (!response.ok) throw new Error(`Discord notification failed (${response.status}).`);
+            return true;
+        }
+
+        function setContactStatus(message, isError = false) {
+            const element = document.getElementById('contact-status');
+            element.textContent = message;
+            element.className = `text-xs min-h-5 ${isError ? 'text-red-400' : 'text-frost'}`;
+        }
+
+        async function handleContactSubmit(event) {
+            event.preventDefault();
+            const submit = document.getElementById('contact-submit');
+            submit.disabled = true;
+            setContactStatus('Sending...');
+            const contact = {
+                name: document.getElementById('contact-name').value.trim(),
+                phone: document.getElementById('contact-phone').value.trim(),
+                email: document.getElementById('contact-email').value.trim(),
+                subject: document.getElementById('contact-subject').value,
+                message: document.getElementById('contact-message').value.trim()
+            };
+            try {
+                await notifyDiscord(CONFIG.DISCORD_CONTACT_WEBHOOK, '', [{
+                    title: `New contact message: ${contact.subject}`,
+                    color: 48863,
+                    fields: [
+                        { name: 'Name', value: contact.name, inline: true },
+                        { name: 'Email', value: contact.email, inline: true },
+                        { name: 'Phone', value: contact.phone || 'Not provided', inline: true },
+                        { name: 'Message', value: contact.message }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]);
+                event.target.reset();
+                setContactStatus(CONFIG.DISCORD_CONTACT_WEBHOOK ? 'Message sent.' : 'Webhook is not configured, so the message was not sent.');
+            } catch (error) {
+                console.error('Contact webhook error:', error);
+                setContactStatus(error.message, true);
+            } finally {
+                submit.disabled = false;
+            }
+        }
+
+        function isDeliveryAddress(address) {
+            return /\b(montana|sinoville)\b/i.test(address) && /\bpretoria\b/i.test(address);
+        }
+
+        function renderCustomizationOptions() {
+            ['remove', 'add'].forEach(type => {
+                document.getElementById(`pdp-${type}-options`).innerHTML = TOPPING_OPTIONS[type].map((label, index) => {
+                    const key = label.toLowerCase();
+                    const id = `pdp-${type}-${index}`;
+                    if (type === 'remove') {
+                        return `<label for="${id}" class="flex items-center gap-3 bg-deep border border-edge rounded-xl px-4 py-3 text-sm text-ice cursor-pointer"><input id="${id}" type="checkbox" value="${key}" onchange="toggleRemovedIngredient('${key}', this.checked)" class="accent-[#4A90FF] w-4 h-4">${label}</label>`;
+                    }
+                    return `<div class="flex items-center justify-between gap-3 bg-deep border border-edge rounded-xl px-3 py-3 transition-colors" id="${id}-card"><span class="text-sm text-ice">${label}</span><div class="flex items-center gap-2"><button type="button" aria-label="Decrease ${label}" onclick="changeToppingAmount('${type}', '${key}', -1)" class="w-8 h-8 rounded-full border border-edge text-frost hover:text-ice hover:border-frost">−</button><span id="${id}-amount" class="w-5 text-center text-xs font-bold text-frost">0</span><button type="button" aria-label="Increase ${label}" onclick="changeToppingAmount('${type}', '${key}', 1)" class="w-8 h-8 rounded-full bg-slate text-ice hover:bg-neon">+</button></div></div>`;
+                }).join('');
+            });
+            updateRemovalTrigger();
+        }
+
+        function openRemovalModal() {
+            const modal = document.getElementById('pdp-removal-modal');
+            modal.classList.remove('hidden');
+            modal.querySelector('button[aria-label="Close"]').focus();
+        }
+
+        function closeRemovalModal() {
+            document.getElementById('pdp-removal-modal').classList.add('hidden');
+            document.getElementById('pdp-removal-trigger').focus();
+        }
+
+        document.addEventListener('keydown', event => {
+            const modal = document.getElementById('pdp-removal-modal');
+            if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeRemovalModal();
+        });
+
+        function updateRemovalTrigger() {
+            const selectedCount = Array.isArray(pdpCustomizations.remove) ? pdpCustomizations.remove.length : Object.keys(pdpCustomizations.remove || {}).length;
+            document.getElementById('pdp-removal-trigger').textContent = selectedCount
+                ? 'Edit removed ingredients'
+                : 'Remove ingredients';
+        }
+
+        function toggleRemovedIngredient(key, selected) {
+            const removals = Array.isArray(pdpCustomizations.remove) ? pdpCustomizations.remove : [];
+            pdpCustomizations.remove = selected
+                ? [...new Set([...removals, key])]
+                : removals.filter(item => item !== key);
+            updateRemovalTrigger();
+        }
+
+        function changeToppingAmount(type, key, delta) {
+            const amount = Math.max(0, Math.min(10, (pdpCustomizations[type][key] || 0) + delta));
+            if (amount) pdpCustomizations[type][key] = amount;
+            else delete pdpCustomizations[type][key];
+            const labels = TOPPING_OPTIONS[type];
+            const index = labels.findIndex(label => label.toLowerCase() === key);
+            const amountEl = document.getElementById(`pdp-${type}-${index}-amount`);
+            amountEl.textContent = amount;
+            amountEl.classList.toggle('text-neon', amount > 0);
+            amountEl.classList.toggle('text-frost', amount === 0);
+            document.getElementById(`pdp-${type}-${index}-card`).classList.toggle('border-neon', amount > 0);
+            if (type === 'remove') updateRemovalTrigger();
+        }
+
+        function customizationText(customizations = {}) {
+            const additions = customizations.add || customizations.additions || [];
+            const removals = customizations.remove || customizations.removals || [];
+            const format = values => Array.isArray(values) ? values.join(', ') : Object.entries(values).map(([name, amount]) => `${name} × ${amount}`).join(', ');
+            const lines = [];
+            if (Object.keys(additions).length) lines.push(`Add: ${format(additions)}`);
+            if ((Array.isArray(removals) ? removals.length : Object.keys(removals).length)) lines.push(`Remove: ${format(removals)}`);
+            return lines;
+        }
+
+        function getItemCustomizations(item) {
+            return item.customizations || item.options || cartCustomizations[item.product_id || item.productId || item.id] || {};
+        }
+
+        function getCartProductId(item) {
+            return item.product_id || item.productId || item.product?.id || item.product?.product_id || item.id || null;
+        }
+
+        function renderCheckoutCustomizations() {
+            const summary = document.getElementById('co-customizations');
+            const lines = cartData.items.flatMap(item => {
+                const changes = customizationText(getItemCustomizations(item));
+                return changes.length ? [`${item.quantity} x ${item.name}: ${changes.join('; ')}`] : [];
+            });
+            summary.innerHTML = lines.length ? lines.map(line => `<p>${line}</p>`).join('') : '<p>No changes selected.</p>';
+        }
+
+        async function loadCatalog() {
+            const cachedProducts = readCache(CACHE_KEYS.products);
+            const cachedCategories = readCache(CACHE_KEYS.categories);
+            if (cachedProducts.length) PRODUCTS = cachedProducts;
+            if (cachedCategories.length) CATEGORIES = cachedCategories;
+
+            try {
+                const [products, categories] = await Promise.all([api.getProducts(), api.getCategories()]);
+                PRODUCTS = products;
+                CATEGORIES = categories;
+                writeCache(CACHE_KEYS.products, PRODUCTS);
+                writeCache(CACHE_KEYS.categories, CATEGORIES);
+                return true;
+            } catch (error) {
+                console.error('Catalog API error:', error);
+                return PRODUCTS.length > 0;
+            }
+        }
+
+        // NAVIGATION
+        function navigate(view, updateUrl = true) {
+            const [route] = view.split('/');
+            document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
+            const t = document.getElementById('view-' + route);
+            if (t) { t.classList.remove('hidden'); t.classList.add('view'); }
+            else { document.getElementById('view-404').classList.remove('hidden'); }
+            if (updateUrl && window.location.hash !== '#/' + view + '/') {
+                history.pushState({}, '', '#/' + view + '/');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (route === 'store' && PRODUCTS.length === 0) loadProducts('store');
+            if (route === 'menu' && document.getElementById('menu-grid').children.length <= 1) loadProducts('menu');
+            if (route === 'home') loadFeatured();
+            if (route === 'search') document.getElementById('search-input').focus();
+            if (route === 'dashboard') loadAccountOrders();
+        }
+
+        function openMenu() { document.getElementById('myNav').style.width = '100%'; }
+        function closeMenu() { document.getElementById('myNav').style.width = '0%'; }
+
+        // PRODUCT LOADING
+        async function loadProducts(target) {
+            try {
+                const loaded = await loadCatalog();
+                if (!loaded) throw new Error('No catalog data available.');
+
+                if (target === 'menu') {
+                    renderFilters('menu-filters', 'filterMenu');
+                    renderGrid('menu-grid', PRODUCTS, 'menu');
+                } else {
+                    renderFilters('store-filters', 'filterStore', 'store-filter-btn');
+                    renderGrid('store-grid', PRODUCTS, 'store');
+                }
+            } catch (e) {
+                const grid = document.getElementById(target === 'menu' ? 'menu-grid' : 'store-grid');
+                grid.innerHTML = '';
+                const message = document.createElement('p');
+                message.className = 'col-span-full text-center py-20 text-frost';
+                message.textContent = e.message;
+                grid.appendChild(message);
+            }
+        }
+
+        async function loadFeatured() {
+            await loadCatalog();
+            const featured = PRODUCTS.slice(0, 4);
+            renderGrid('home-featured', featured, 'menu');
+        }
+
+        // RENDER
+        function getImgUrl(p) {
+            if (!p || !p.image) return 'https://placehold.co/400x400/161922/4A90FF?text=No+Image';
+            if (p.image.startsWith('http')) return p.image;
+            return CONFIG.API_BASE.replace('/store-access', '') + '/' + p.image;
+        }
+
+        function renderGrid(containerId, products, returnView) {
+            const grid = document.getElementById(containerId);
+            if (!products || products.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center py-20 text-frost">This store has no published items yet.</p>';
+                return;
+            }
+            grid.innerHTML = products.map(p => `
+                <div class="group cursor-pointer" onclick="viewProduct('${p.id}','${returnView}')">
+                    <div class="bg-surface rounded-2xl overflow-hidden aspect-square border border-edge mb-4 transition-all group-hover:border-frost">
+                        <img src="${getImgUrl(p)}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <h4 class="text-sm font-semibold text-ice truncate">${p.name}</h4>
+                    <p class="text-frost text-sm mt-1">${CONFIG.CURRENCY} ${parseFloat(p.price).toFixed(0)}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderFilters(containerId, fnName, btnClass = 'filter-btn') {
+            const bar = document.getElementById(containerId);
+            let html = `<button onclick="${fnName}('all')" class="${btnClass} text-ice font-bold border-b-2 border-ice pb-3 whitespace-nowrap">All Items</button>`;
+            CATEGORIES.forEach(c => {
+                html += `<button onclick="${fnName}('${c.id}')" class="${btnClass} text-frost hover:text-ice pb-3 whitespace-nowrap transition-colors border-b-2 border-transparent hover:border-frost">${c.name}</button>`;
+            });
+            bar.innerHTML = html;
+        }
+
+        function filterMenu(catId) {
+            setActiveFilter('filter-btn', event.target);
+            renderGrid('menu-grid', catId === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category_id === catId), 'menu');
+        }
+
+        function filterStore(catId) {
+            setActiveFilter('store-filter-btn', event.target);
+            renderGrid('store-grid', catId === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category_id === catId), 'store');
+        }
+
+        function setActiveFilter(cls, active) {
+            document.querySelectorAll('.' + cls).forEach(b => {
+                b.classList.remove('text-ice', 'font-bold', 'border-ice');
+                b.classList.add('text-frost', 'border-transparent');
+            });
+            active.classList.add('text-ice', 'font-bold', 'border-ice');
+            active.classList.remove('text-frost', 'border-transparent');
+        }
+
+        // PRODUCT DETAIL
+        async function viewProduct(id, returnView, updateUrl = true) {
+            productReturnView = returnView || 'store';
+            const p = PRODUCTS.find(product => String(product.id) === String(id)) || await api.getProduct(id).catch(error => {
+                console.error('Product API error:', error);
+                return null;
+            });
+            if (!p) return;
+            window._currentProduct = p;
+            pdpQty = 1;
+
+            document.getElementById('pdp-img').src = getImgUrl(p);
+            document.getElementById('pdp-name').textContent = p.name;
+            document.getElementById('pdp-price').textContent = CONFIG.CURRENCY + ' ' + parseFloat(p.price).toFixed(0);
+            document.getElementById('pdp-qty').textContent = '1';
+            document.getElementById('pdp-desc').textContent = p.description || 'No description available.';
+            document.getElementById('pdp-category').textContent = p.category_name || 'Item';
+            pdpCustomizations = { add: {}, remove: [] };
+            renderCustomizationOptions();
+            document.getElementById('pdp-add').setAttribute('onclick', `addPdpToCart('${p.id}')`);
+
+            navigate(`product/${encodeURIComponent(p.id)}`, updateUrl);
+        }
+
+        function changePdpQty(d) {
+            pdpQty = Math.max(1, pdpQty + d);
+            document.getElementById('pdp-qty').textContent = pdpQty;
+        }
+
+        // CART
+        async function ensureCart() {
+            if (!cartId) {
+                const d = await api.createCart();
+                if (d && d.cart_id) { cartId = d.cart_id; localStorage.setItem('vm_cart_id', cartId); }
+            }
+            return cartId;
+        }
+
+        async function refreshCart() {
+            if (!cartId) { renderCart(); updateCartDot(); return; }
+            const d = await api.getCart(cartId);
+            cartData = d || { items: [], item_count: 0, subtotal: 0 };
+            renderCart();
+            updateCartDot();
+        }
+
+        function getToppingCount(customizations = {}) {
+            const additions = customizations.add || customizations.additions || {};
+            return Array.isArray(additions)
+                ? additions.length
+                : Object.values(additions).reduce((sum, amount) => sum + (Number(amount) || 0), 0);
+        }
+
+        function getCartToppingCost() {
+            return (cartData.items || []).reduce((sum, item) => {
+                return sum + getToppingCount(getItemCustomizations(item)) * (Number(item.quantity) || 1) * TOPPING_PRICE;
+            }, 0);
+        }
+
+        function getCartSubtotal() {
+            return (parseFloat(cartData.subtotal) || 0) + getCartToppingCost();
+        }
+
+        function updateCartDot() {
+            const dot = document.getElementById('cart-dot');
+            const c = cartData.item_count || 0;
+            dot.textContent = c;
+            dot.style.display = c > 0 ? 'flex' : 'none';
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            if (!cartData.items || cartData.items.length === 0) {
+                container.innerHTML = '<p class="text-frost text-center py-10">Your bag is empty.</p>';
+                return;
+            }
+            document.getElementById('subtotal').textContent = CONFIG.CURRENCY + ' ' + (parseFloat(cartData.subtotal) || 0).toFixed(0);
+            document.getElementById('cart-topping-total').textContent = CONFIG.CURRENCY + ' ' + getCartToppingCost().toFixed(0);
+            updateCartTotal();
+
+            container.innerHTML = cartData.items.map(item => `
+                <div class="flex gap-4 items-center border-b border-edge pb-6">
+                    <img src="${getImgUrl(item)}" class="w-16 h-16 rounded-xl object-cover border border-edge">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-ice truncate">${item.name}</p>
+                        <p class="text-frost text-sm">${CONFIG.CURRENCY} ${parseFloat(item.price).toFixed(0)} base${getToppingCount(getItemCustomizations(item)) ? ` · toppings +${CONFIG.CURRENCY} ${getToppingCount(getItemCustomizations(item)) * TOPPING_PRICE} / item` : ''}</p>
+                        ${customizationText(getItemCustomizations(item)).map(line => `<p class="text-neon text-xs">${line}</p>`).join('')}
+                        <div class="flex items-center gap-3 mt-2">
+                            <button onclick="updateCartItem('${item.product_id}', ${item.quantity - 1})" class="w-7 h-7 rounded-full bg-edge text-xs flex items-center justify-center hover:bg-frost hover:text-void transition-colors">-</button>
+                            <span class="text-xs text-ice">${item.quantity}</span>
+                            <button onclick="updateCartItem('${item.product_id}', ${item.quantity + 1})" class="w-7 h-7 rounded-full bg-edge text-xs flex items-center justify-center hover:bg-frost hover:text-void transition-colors">+</button>
+                        </div>
+                    </div>
+                    <button onclick="removeCartItem('${item.product_id}')" class="text-frost hover:text-red-400 transition-colors"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function updateCartTotal() {
+            const sub = getCartSubtotal();
+            const ship = sub >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_COST;
+            const disc = currentDiscount ? sub * (currentDiscount.percent / 100) : 0;
+            document.getElementById('cart-total').textContent = CONFIG.CURRENCY + ' ' + (sub + ship - disc).toFixed(0);
+        }
+
+        async function addPdpToCart(pid) {
+            await ensureCart();
+            cartCustomizations[pid] = pdpCustomizations;
+            writeCache('ynce_cart_customizations_v1', cartCustomizations);
+            await api.addToCart(cartId, pid, pdpQty, pdpCustomizations);
+            await refreshCart();
+            toggleCart();
+        }
+
+        async function updateCartItem(pid, qty) {
+            if (qty <= 0) return removeCartItem(pid);
+            await api.updateCart(cartId, pid, qty);
+            await refreshCart();
+        }
+
+        async function removeCartItem(pid) {
+            await api.removeFromCart(cartId, pid);
+            await refreshCart();
+        }
+
+        // CART UI
+        function toggleCart() {
+            document.getElementById('cart-drawer').classList.toggle('open');
+            document.getElementById('drawer-overlay').classList.toggle('opacity-0');
+            document.getElementById('drawer-overlay').classList.toggle('pointer-events-none');
+        }
+
+        function closeCart() {
+            document.getElementById('cart-drawer').classList.remove('open');
+            document.getElementById('drawer-overlay').classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // DISCOUNT
+        function applyDiscount() {
+            const code = document.getElementById('discount-code').value.toUpperCase();
+            if (code === 'VIP20') { currentDiscount = { code: 'VIP20', percent: 20 }; alert('20% off applied!'); }
+            else if (code === 'WELCOME') { currentDiscount = { code: 'WELCOME', percent: 10 }; alert('10% off applied!'); }
+            else { alert('Invalid code.'); return; }
+            document.getElementById('discount-row').classList.remove('hidden');
+            document.getElementById('discount-label').textContent = currentDiscount.code;
+            const disc = getCartSubtotal() * (currentDiscount.percent / 100);
+            document.getElementById('discount-amount').textContent = '-' + CONFIG.CURRENCY + ' ' + disc.toFixed(0);
+            updateCartTotal();
+        }
+
+        // CHECKOUT
+        function openCheckout() {
+            if (!cartData.items || cartData.items.length === 0) return alert('Bag is empty.');
+            if (!userSession) {
+                closeCheckout();
+                navigate('account');
+                setAccountMessage('Sign in or create an account before checking out.', true);
+                return;
+            }
+            const sub = getCartSubtotal();
+            const ship = sub >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_COST;
+            const disc = currentDiscount ? sub * (currentDiscount.percent / 100) : 0;
+
+            document.getElementById('co-subtotal').textContent = CONFIG.CURRENCY + ' ' + (parseFloat(cartData.subtotal) || 0).toFixed(0);
+            document.getElementById('co-toppings').textContent = CONFIG.CURRENCY + ' ' + getCartToppingCost().toFixed(0);
+            document.getElementById('co-email').value = userSession.email;
+            document.getElementById('co-shipping').textContent = ship === 0 ? 'FREE' : CONFIG.CURRENCY + ' ' + ship;
+            if (currentDiscount) {
+                document.getElementById('co-discount-row').classList.remove('hidden');
+                document.getElementById('co-discount').textContent = '-' + CONFIG.CURRENCY + ' ' + disc.toFixed(0);
+            }
+            document.getElementById('co-total').textContent = CONFIG.CURRENCY + ' ' + (sub + ship - disc).toFixed(0);
+            renderCheckoutCustomizations();
+            nextCheckoutStep(1);
+            document.getElementById('checkout-payment-status').textContent = '';
+            document.getElementById('co-referral-status').textContent = 'Have an affiliate code? Add it here.';
+            document.getElementById('co-referral-status').className = 'text-xs text-frost mt-2 min-h-4';
+            document.getElementById('checkout-submit').textContent = 'Place Cash Order';
+            document.getElementById('checkout-modal').classList.add('open');
+            toggleCart();
+        }
+
+        function closeCheckout() { document.getElementById('checkout-modal').classList.remove('open'); }
+
+        function nextCheckoutStep(step) {
+            const current = document.getElementById(`checkout-step-${checkoutStep}`);
+            if (step > checkoutStep && current) {
+                const valid = Array.from(current.querySelectorAll('input, textarea, select')).every(field => field.reportValidity());
+                if (!valid) return;
+            }
+            checkoutStep = step;
+            document.querySelectorAll('.checkout-step').forEach(panel => panel.classList.add('hidden'));
+            document.getElementById(`checkout-step-${step}`).classList.remove('hidden');
+            for (let index = 1; index <= 3; index++) {
+                const label = document.getElementById(`checkout-step-label-${index}`);
+                label.className = index === step
+                    ? 'text-ice font-bold border-b-2 border-ice pb-3'
+                    : 'text-frost border-b-2 border-transparent pb-3';
+            }
+        }
+
+        async function notifyCompletedOrder(result, address, estimatedDeliveryAt) {
+            try {
+                await notifyDiscord(CONFIG.DISCORD_ORDER_WEBHOOK, '', [{
+                    title: 'New cash-on-delivery order',
+                    color: 16744192,
+                    fields: [
+                        { name: 'Customer', value: document.getElementById('co-name').value, inline: true },
+                        { name: 'Email', value: userSession.email, inline: true },
+                        { name: 'Phone', value: document.getElementById('co-phone').value, inline: true },
+                        { name: 'Payment', value: 'Cash on delivery', inline: true },
+                        { name: 'Delivery area', value: CONFIG.DELIVERY_AREA, inline: true },
+                        { name: 'Estimated delivery', value: formatDeliveryEstimate(estimatedDeliveryAt), inline: true },
+                        { name: 'Address', value: address },
+                        { name: 'Topping fees', value: `${CONFIG.CURRENCY} ${getCartToppingCost().toFixed(0)}`, inline: true },
+                        { name: 'Total', value: document.getElementById('co-total').textContent, inline: true },
+                        { name: 'Items', value: cartData.items.map(item => `${item.quantity} x ${item.name}${customizationText(getItemCustomizations(item)).length ? ` (${customizationText(getItemCustomizations(item)).join('; ')})` : ''}`).join('\n').slice(0, 1024) || 'Cart items unavailable' },
+                        { name: 'Product links', value: cartData.items.map(item => `${item.name}: ${new URL(`#/product/${encodeURIComponent(getCartProductId(item))}/`, window.location.href).href}`).join('\n').slice(0, 1024) || 'No product links' }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]);
+            } catch (notificationError) {
+                console.error('Order webhook error:', notificationError);
+            }
+        }
+
+        function formatDeliveryEstimate(estimatedDeliveryAt) {
+            return new Date(estimatedDeliveryAt).toLocaleString([], { hour: 'numeric', minute: '2-digit', day: 'numeric', month: 'short' });
+        }
+
+        function showOrderConfirmation(order) {
+            const eta = new Date(order.estimated_delivery_at);
+            document.getElementById('order-confirmation-time').textContent = eta.toLocaleString([], {
+                weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'
+            });
+            const orderId = order.id || order.order_id;
+            document.getElementById('order-confirmation-id').textContent = orderId ? `Order #${orderId}` : '';
+            document.getElementById('order-confirmation-modal').classList.remove('hidden');
+            document.getElementById('order-confirmation-modal').querySelector('button').focus();
+        }
+
+        function closeOrderConfirmation() {
+            document.getElementById('order-confirmation-modal').classList.add('hidden');
+        }
+
+        async function attributeReferral(orderId) {
+            const input = document.getElementById('co-referral-code');
+            const status = document.getElementById('co-referral-status');
+            const code = input.value.trim().toUpperCase();
+            if (!code) return null;
+            if (!CONFIG.REFERRAL_API_BASE || CONFIG.REFERRAL_API_BASE.includes('YOUR-WORKER')) {
+                throw new Error('Referral service is not configured yet.');
+            }
+            const buyerId = String(userSession?.id || userSession?.user_id || userSession?.customer_id || userSession?.email || '').trim();
+            if (!buyerId) throw new Error('We could not identify the checkout customer for this referral.');
+            status.textContent = 'Applying affiliate code…';
+            status.className = 'text-xs text-frost mt-2 min-h-4';
+            const response = await fetch(`${CONFIG.REFERRAL_API_BASE.replace(/\/+$/, '')}/attribute`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${CONFIG.REFERRAL_API_TOKEN}`,
+                    'Idempotency-Key': `checkout-${String(orderId)}`
+                },
+                body: JSON.stringify({
+                    code,
+                    buyer_id: buyerId,
+                    order_id: String(orderId),
+                    product: cartData.items.map(item => `${item.quantity} x ${item.name}`).join(', ').slice(0, 200)
+                })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error?.message || 'This affiliate code could not be applied.');
+            status.textContent = result.data?.idempotent ? 'Affiliate code already recorded.' : 'Affiliate code recorded. Thank you for supporting our affiliates.';
+            status.className = 'text-xs text-neon mt-2 min-h-4';
+            return result.data || result;
+        }
+
+        async function handleCheckout(e) {
+            e.preventDefault();
+            if (checkoutStep !== 3) {
+                nextCheckoutStep(checkoutStep + 1);
+                return;
+            }
+            const address = {
+                street: document.getElementById('co-street').value.trim(),
+                zone: document.getElementById('co-zone').value.trim(),
+                city: document.getElementById('co-city').value.trim(),
+                province: document.getElementById('co-province').value.trim(),
+                postal_code: document.getElementById('co-postal-code').value.trim(),
+                notes: document.getElementById('co-notes').value.trim()
+            };
+            const addressText = [address.street, address.zone, address.city, address.province, address.postal_code].filter(Boolean).join(', ');
+            if (!isDeliveryAddress(`${address.zone}, ${address.city}`)) {
+                alert('Direct delivery is currently available in Montana or Sinoville, Pretoria.');
+                return;
+            }
+            try {
+                const toppingsTotal = getCartToppingCost();
+                const sub = getCartSubtotal();
+                const ship = sub >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_COST;
+                const disc = currentDiscount ? sub * (currentDiscount.percent / 100) : 0;
+                const orderTotal = sub + ship - disc;
+                const estimatedDeliveryAt = new Date(Date.now() + 45 * 60 * 1000).toISOString();
+                const orderDetails = {
+                    cart_id: cartId,
+                    items: cartData.items.map(item => ({
+                        product_id: getCartProductId(item),
+                        quantity: Number(item.quantity) || 1,
+                        customizations: getItemCustomizations(item),
+                        toppings_total: getToppingCount(getItemCustomizations(item)) * (Number(item.quantity) || 1) * TOPPING_PRICE
+                    })),
+                    customer_name: document.getElementById('co-name').value,
+                    customer_email: userSession.email,
+                    customer_phone: document.getElementById('co-phone').value,
+                    shipping_address: addressText,
+                    delivery_address: addressText,
+                    customer_address: addressText,
+                    address: addressText,
+                    address_line_1: address.street,
+                    street_address: address.street,
+                    suburb: address.zone,
+                    city: address.city,
+                    province: address.province,
+                    postal_code: address.postal_code,
+                    delivery_notes: address.notes,
+                    delivery_area: CONFIG.DELIVERY_AREA,
+                    estimated_delivery_at: estimatedDeliveryAt,
+                    estimated_delivery_minutes: 45,
+                    items_subtotal: parseFloat(cartData.subtotal) || 0,
+                    toppings_total: toppingsTotal,
+                    shipping_total: ship,
+                    discount_total: disc,
+                    total: orderTotal,
+                    payment_method: 'cod',
+                    payment_type: 'cash',
+                    payment_status: 'pending',
+                    discount_code: currentDiscount ? currentDiscount.code : null
+                };
+                if (!orderDetails.cart_id || !orderDetails.items.length || orderDetails.items.some(item => !item.product_id)) {
+                    throw new Error('Your cart items are incomplete. Please refresh your bag and try again.');
+                }
+                let result;
+                try {
+                    result = await api.placeOrder(orderDetails);
+                } catch (orderError) {
+                    if (!/incomplete order data/i.test(orderError.message)) throw orderError;
+                    console.warn('Legacy order endpoint rejected the payload; retrying cash checkout endpoint.', orderError);
+                    result = await api.createCashCheckout(orderDetails);
+                }
+                const remoteOrder = result.data || result.order || result;
+                const referralOrderId = remoteOrder.id || remoteOrder.order_id || `local-${Date.now()}`;
+                let referralAttribution = null;
+                if (document.getElementById('co-referral-code').value.trim()) {
+                    try {
+                        referralAttribution = await attributeReferral(referralOrderId);
+                    } catch (referralError) {
+                        console.warn('Referral attribution error:', referralError);
+                        document.getElementById('co-referral-status').textContent = `Order placed, but the affiliate code was not recorded: ${referralError.message}`;
+                        document.getElementById('co-referral-status').className = 'text-xs text-red-400 mt-2 min-h-4';
+                    }
+                }
+                const localOrder = {
+                    ...remoteOrder,
+                    local_order_id: `local-${Date.now()}`,
+                    created_at: remoteOrder.created_at || new Date().toISOString(),
+                    estimated_delivery_at: remoteOrder.estimated_delivery_at || estimatedDeliveryAt,
+                    total: orderTotal,
+                    status: remoteOrder.status || 'pending',
+                    referral_attribution: referralAttribution,
+                    items: cartData.items.map(item => ({
+                        product_id: getCartProductId(item),
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        customizations: getItemCustomizations(item),
+                        toppings_total: getToppingCount(getItemCustomizations(item)) * (Number(item.quantity) || 1) * TOPPING_PRICE
+                    }))
+                };
+                storeOrder(localOrder);
+                await notifyCompletedOrder(result, addressText, localOrder.estimated_delivery_at);
+                showOrderConfirmation(localOrder);
+                cartId = null; localStorage.removeItem('vm_cart_id');
+                cartData = { items: [], item_count: 0, subtotal: 0 };
+                currentDiscount = null;
+                renderCart(); updateCartDot();
+                closeCheckout();
+                closeCart();
+                closeMenu();
+                navigate('home');
+            } catch (error) {
+                console.error('Checkout API error:', error);
+                alert(error.message || 'Something went wrong. Try again.');
+            }
+        }
+
+        // SEARCH
+        function handleSearchInput() {
+            clearTimeout(searchTimeout);
+            const q = document.getElementById('search-input').value.trim();
+            if (!q) { document.getElementById('search-results').innerHTML = ''; return; }
+            searchTimeout = setTimeout(async () => {
+                await loadCatalog();
+                const query = q.toLowerCase();
+                const results = PRODUCTS.filter(product =>
+                    `${product.name || ''} ${product.description || ''}`.toLowerCase().includes(query)
+                );
+                renderGrid('search-results', results, 'store');
+            }, 400);
+        }
+
+        // ACCOUNT
+        let accountMode = 'login';
+
+        function setAccountMode(mode) {
+            accountMode = mode;
+            const register = mode === 'register';
+            document.getElementById('account-name').classList.toggle('hidden', !register);
+            document.getElementById('login-tab').className = register ? 'text-frost pb-3 text-sm' : 'text-ice font-bold border-b-2 border-ice pb-3 text-sm';
+            document.getElementById('register-tab').className = register ? 'text-ice font-bold border-b-2 border-ice pb-3 text-sm' : 'text-frost pb-3 text-sm';
+            document.getElementById('account-submit').textContent = register ? 'Create Account' : 'Sign In';
+            document.getElementById('account-message').textContent = '';
+        }
+
+        function setAccountMessage(message, isError = false) {
+            const element = document.getElementById('account-message');
+            element.textContent = message;
+            element.className = `text-xs min-h-5 ${isError ? 'text-red-400' : 'text-frost'}`;
+        }
+
+        async function handleAccountSubmit() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const name = document.getElementById('account-name').value.trim();
+            if (!email || !password || (accountMode === 'register' && !name)) {
+                setAccountMessage('Complete all required fields.', true);
+                return;
+            }
+            setAccountMessage(accountMode === 'register' ? 'Creating your account...' : 'Signing you in...');
+            try {
+                const response = accountMode === 'register'
+                    ? await api.registerAccount({ name, email, password })
+                    : await api.loginAccount({ email, password });
+                const account = response.data || response.customer || response.user || {};
+                userSession = {
+                    email: account.email || email,
+                    name: account.name || name,
+                    token: response.token || response.access_token || account.token || null
+                };
+                localStorage.setItem('wde_session', JSON.stringify(userSession));
+                document.getElementById('dash-email').textContent = userSession.email;
+                navigate('dashboard');
+            } catch (error) {
+                console.error('Account API error:', error);
+                setAccountMessage(error.message, true);
+            }
+        }
+
+        function handleLogout() {
+            userSession = null;
+            localStorage.removeItem('wde_session');
+            navigate('home');
+        }
+
+        function handleAccountClick() {
+            if (userSession) { document.getElementById('dash-email').textContent = userSession.email; navigate('dashboard'); }
+            else navigate('account');
+        }
+
+        async function loadAccountOrders() {
+            if (!userSession) return;
+            const list = document.getElementById('dash-orders-list');
+            if (!list) return;
+            list.innerHTML = '<p class="text-frost">Loading orders...</p>';
+            try {
+                const response = await api.getOrders(userSession.email);
+                const remoteOrders = normalizeOrders(response);
+                const storedOrders = getStoredOrders();
+                const combined = [...remoteOrders, ...storedOrders].filter((order, index, orders) => {
+                    const id = order.id || order.order_id || `${order.created_at || ''}-${index}`;
+                    return orders.findIndex(candidate => String(candidate.id || candidate.order_id || `${candidate.created_at || ''}-${index}`) === String(id)) === index;
+                });
+                renderAccountOrders(combined);
+            } catch (error) {
+                console.error('Order history API error:', error);
+                const storedOrders = getStoredOrders();
+                renderAccountOrders(storedOrders);
+                if (!storedOrders.length) list.innerHTML = `<p class="text-red-400">${error.message}</p>`;
+            }
+        }
+
+        function normalizeOrders(response) {
+            if (Array.isArray(response)) return response;
+            if (Array.isArray(response?.orders)) return response.orders;
+            if (Array.isArray(response?.data)) return response.data;
+            if (Array.isArray(response?.data?.orders)) return response.data.orders;
+            if (Array.isArray(response?.results)) return response.results;
+            return [];
+        }
+
+        function renderAccountOrders(orders) {
+            accountOrders = orders;
+            const list = document.getElementById('dash-orders-list');
+            const total = orders.reduce((sum, order) => sum + (parseFloat(order.total || order.amount) || 0), 0);
+            document.getElementById('dash-orders').textContent = orders.length;
+            document.getElementById('dash-spent').textContent = `${CONFIG.CURRENCY} ${total.toFixed(0)}`;
+            if (!orders.length) {
+                list.innerHTML = '<p class="text-frost">No orders yet. Your next one starts with the menu.</p>';
+                return;
+            }
+            list.innerHTML = orders.map(order => {
+                const status = String(order.status || order.state || 'pending').replace(/_/g, ' ');
+                const items = order.items || order.line_items || [];
+                const itemSummary = items.map(item => `${item.quantity || 1} x ${item.name || item.product_name || 'Item'}`).join(', ');
+                const orderKey = getOrderKey(order);
+                const confirmation = getOrderConfirmation(order);
+                const estimatedDelivery = order.estimated_delivery_at
+                    ? `<p class="text-neon text-sm mt-2">Estimated delivery: ${formatDeliveryEstimate(order.estimated_delivery_at)}</p>`
+                    : '';
+                const confirmationAction = confirmation
+                    ? `<span class="text-green-400 text-xs">Received ${new Date(confirmation).toLocaleDateString()}</span>`
+                    : `<button onclick="confirmOrderReceived('${orderKey.replace(/'/g, '&#39;')}')" class="text-ice underline underline-offset-4">Confirm received</button>`;
+                return `<article class="bg-surface border border-edge p-6 rounded-2xl">
+                    <div class="flex flex-wrap justify-between gap-4 mb-4">
+                        <div><p class="text-xs uppercase tracking-widest text-frost">Order ${order.id || order.order_id || ''}</p>
+                        <p class="text-ice font-semibold mt-1">${itemSummary || 'Food order'}</p>${estimatedDelivery}</div>
+                        <span class="text-neon text-sm font-bold capitalize">${status}</span>
+                    </div>
+                    <div class="flex items-center gap-1 mb-4">${renderDeliveryProgress(status)}</div>
+                    <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-frost">
+                        <span>${order.created_at ? new Date(order.created_at).toLocaleDateString() : 'Recent order'} · ${CONFIG.CURRENCY} ${parseFloat(order.total || order.amount || 0).toFixed(0)}</span>
+                        <div class="flex flex-wrap gap-4 items-center">${confirmationAction}<button onclick="reorder(${JSON.stringify(items).replace(/\"/g, '&quot;')})" class="text-ice underline underline-offset-4">Reorder</button></div>
+                    </div>
+                </article>`;
+            }).join('');
+        }
+
+        function renderDeliveryProgress(status) {
+            const stages = ['pending', 'paid', 'packed', 'shipped', 'delivered'];
+            const normalized = status.toLowerCase();
+            const stageIndex = stages.findIndex(stage => normalized.includes(stage));
+            const activeIndex = stageIndex < 0 ? (normalized.includes('cancel') ? -1 : 0) : stageIndex;
+            return stages.map((stage, index) => `<span class="h-1.5 flex-1 rounded-full ${index <= activeIndex ? 'bg-neon' : 'bg-edge'}" title="${stage}"></span>`).join('');
+        }
+
+        async function submitProductReview() {
+            const product = window._currentProduct;
+            const text = document.getElementById('review-text').value.trim();
+            const rating = Number(document.querySelector('input[name="review-rating"]:checked')?.value || 5);
+            const status = document.getElementById('review-status');
+            if (!product || !text) {
+                status.textContent = 'Write a review before posting.';
+                return;
+            }
+            if (!userSession) {
+                status.textContent = 'Sign in before posting a review.';
+                return;
+            }
+            const button = document.querySelector('#pdp-review-form button');
+            button.disabled = true;
+            status.textContent = 'Sending review…';
+            try {
+                await notifyDiscord(CONFIG.DISCORD_REVIEW_WEBHOOK, '', [{
+                    title: `Product review: ${product.name}`,
+                    color: 4883199,
+                    fields: [
+                        { name: 'Rating', value: `${'★'.repeat(rating)}${'☆'.repeat(5 - rating)} (${rating}/5)`, inline: true },
+                        { name: 'Customer', value: userSession.name || userSession.email, inline: true },
+                        { name: 'Review', value: text.slice(0, 1024) },
+                        { name: 'Product ID', value: String(product.id), inline: true }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]);
+                document.getElementById('review-text').value = '';
+                status.textContent = 'Review sent. Thanks for sharing!';
+            } catch (error) {
+                console.error('Review webhook error:', error);
+                status.textContent = 'Could not send your review. Please try again.';
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function reorder(items) {
+            if (!items.length) return setAccountMessage('This order has no reusable items.', true);
+            await ensureCart();
+            for (const item of items) {
+                const productId = item.product_id || item.productId || item.id;
+                if (productId) await api.addToCart(cartId, productId, item.quantity || 1);
+            }
+            await refreshCart();
+            toggleCart();
+        }
+
+        // HASH ROUTING
+        function handleHash() {
+            const hashPath = window.location.hash.replace(/^#/, '').split('?')[0];
+            const segments = hashPath.split('/').filter(Boolean);
+            const requestedRoute = segments[0]?.toLowerCase() || 'home';
+            const routes = { shop: 'store' };
+            if (requestedRoute === 'product' && segments[1]) {
+                viewProduct(decodeURIComponent(segments[1]), 'menu', false);
+                return;
+            }
+            navigate(routes[requestedRoute] || requestedRoute, false);
+        }
+
+        window.addEventListener('hashchange', handleHash);
+        window.addEventListener('popstate', handleHash);
+
+        // Inline navigation links use href="#" for progressive enhancement.
+        document.addEventListener('click', event => {
+            const link = event.target.closest('a[href="#"]');
+            if (link) event.preventDefault();
+        });
+
+        // INIT
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshCart();
+            handleHash();
+        });
+    </script>
+
+    <script src="http://gigs.varsitymarket.co.za/track/vm.analytics.js" data-store-id="2" defer></script>
+    <script src="https://demo-embedded.varsitymarket.co.za/track/vm.analytics.js" data-store-id="78" defer></script>
+</body>
+
+</html>
