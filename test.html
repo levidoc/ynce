@@ -1042,6 +1042,8 @@
             // Referral Worker settings. Replace both values before publishing.
             REFERRAL_API_BASE: 'https://YOUR-WORKER.workers.dev',
             REFERRAL_API_TOKEN: 'change-this-checkout-token',
+            // Set to false while debugging to allow checkout outside kitchen hours.
+            ENFORCE_KITCHEN_HOURS: false,
             STORE_ID: '2',
             API_KEY: 'vm_live_61c16be5a975a49380c11207e1c7802b17c3b0a6564daa97',
             STORE_NAME: 'We Dont Eats',
@@ -1670,6 +1672,7 @@
         }
 
         function canPlaceKitchenOrder() {
+            if (CONFIG.ENFORCE_KITCHEN_HOURS === false) return true;
             const status = getKitchenStatus();
             if (status.isOpen) return true;
             alert(kitchenClosedMessage());
