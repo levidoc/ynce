@@ -801,6 +801,13 @@
                 <p class="font-serif text-4xl font-custom text-ice">Regular</p>
             </div>
         </div>
+        <div class="bg-surface border border-edge p-8 rounded-2xl mb-16">
+            <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Share the kitchen</p>
+            <h2 class="font-serif text-3xl font-custom text-ice mb-3">Become an affiliate</h2>
+            <p class="text-frost text-sm leading-relaxed mb-5">Create your personal referral code and earn a free product when someone orders using it.</p>
+            <button id="affiliate-register-button" onclick="registerAsAffiliate()" class="bg-ice text-void font-bold py-3 px-6 rounded-full hover:bg-frost transition-colors text-sm">Create my referral code</button>
+            <p id="affiliate-register-status" class="text-sm text-frost min-h-5 mt-4"></p>
+        </div>
         <div class="flex justify-between items-end mb-6">
             <div>
                 <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Your orders</p>
@@ -1040,7 +1047,7 @@
         const CONFIG = {
             API_BASE: 'https://gigs.varsitymarket.co.za/store-access',
             // Referral Worker settings. Replace both values before publishing.
-            REFERRAL_API_BASE: 'https://YOUR-WORKER.workers.dev',
+            REFERRAL_API_BASE: 'https://animehood0access0point.levidoc00.workers.dev/',
             REFERRAL_API_TOKEN: 'change-this-checkout-token',
             // Set to false while debugging to allow checkout outside kitchen hours.
             ENFORCE_KITCHEN_HOURS: false,
@@ -1773,6 +1780,52 @@
 
         function closeOrderConfirmation() {
             document.getElementById('order-confirmation-modal').classList.add('hidden');
+        }
+
+        async function registerAsAffiliate() {
+            const status = document.getElementById('affiliate-register-status');
+            const button = document.getElementById('affiliate-register-button');
+            if (!userSession?.email) {
+                status.textContent = 'Please sign in first.';
+                status.className = 'text-sm text-red-400 min-h-5 mt-4';
+                return;
+            }
+            const externalId = String(userSession.id || userSession.user_id || userSession.customer_id || userSession.email).trim();
+            button.disabled = true;
+            button.textContent = 'Creating code…';
+            status.textContent = 'Setting up your referral code…';
+            status.className = 'text-sm text-frost min-h-5 mt-4';
+            try {
+                if (!CONFIG.REFERRAL_API_BASE || CONFIG.REFERRAL_API_BASE.includes('YOUR-WORKER')) {
+                    throw new Error('Referral service is not configured yet.');
+                }
+                const response = await fetch(`${CONFIG.REFERRAL_API_BASE.replace(/\/+$/, '')}/affiliate/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.REFERRAL_API_TOKEN}`
+                    },
+                    body: JSON.stringify({
+                        name: userSession.name || userSession.full_name || userSession.email.split('@')[0],
+                        email: userSession.email,
+                        external_id: externalId
+                    })
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(result.error?.message || 'Could not create your referral code.');
+                const data = result.data || result;
+                status.textContent = data.existing
+                    ? `Your referral code is ${data.code}.`
+                    : `Your referral code is ${data.code}. Share it with friends.`;
+                status.className = 'text-sm text-neon min-h-5 mt-4 font-bold';
+                button.textContent = 'Referral code ready';
+            } catch (error) {
+                console.error('Affiliate registration error:', error);
+                status.textContent = error.message || 'Could not create your referral code.';
+                status.className = 'text-sm text-red-400 min-h-5 mt-4';
+                button.disabled = false;
+                button.textContent = 'Create my referral code';
+            }
         }
 
         async function attributeReferral(orderId) {
