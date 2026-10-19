@@ -897,7 +897,7 @@
             <div class="flex justify-between items-start mb-10">
                 <div>
                     <h2 class="font-serif text-3xl font-custom text-ice mb-2">Checkout</h2>
-                    <p class="text-frost text-sm">Signed-in checkout</p>
+                    <p class="text-frost text-sm">Signed-in checkout · Kitchen open Tue–Sun, 10:00–17:00 · Closed Mondays</p>
                 </div>
                 <button onclick="closeCheckout()" class="text-frost hover:text-ice"><i
                         class="fa-solid fa-xmark text-xl"></i></button>
@@ -1040,7 +1040,7 @@
         const CONFIG = {
             API_BASE: 'https://gigs.varsitymarket.co.za/store-access',
             // Referral Worker settings. Replace both values before publishing.
-            REFERRAL_API_BASE: 'https://animehood0access0point.levidoc00.workers.dev/',
+            REFERRAL_API_BASE: 'https://YOUR-WORKER.workers.dev',
             REFERRAL_API_TOKEN: 'change-this-checkout-token',
             STORE_ID: '2',
             API_KEY: 'vm_live_61c16be5a975a49380c11207e1c7802b17c3b0a6564daa97',
@@ -1644,9 +1644,42 @@
             updateCartTotal();
         }
 
+        // KITCHEN HOURS: Pretoria/South Africa time (UTC+2, no daylight-saving changes).
+        function getKitchenStatus() {
+            const parts = new Intl.DateTimeFormat('en-ZA', {
+                timeZone: 'Africa/Johannesburg',
+                weekday: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).formatToParts(new Date());
+            const weekday = parts.find(part => part.type === 'weekday')?.value?.toLowerCase();
+            const hour = Number(parts.find(part => part.type === 'hour')?.value || 0);
+            const minute = Number(parts.find(part => part.type === 'minute')?.value || 0);
+            const minutes = (hour * 60) + minute;
+            const isMonday = weekday === 'mon';
+            const isOpen = !isMonday && minutes >= 600 && minutes < 1020;
+            return { isOpen, isMonday };
+        }
+
+        function kitchenClosedMessage() {
+            const status = getKitchenStatus();
+            return status.isMonday
+                ? 'The kitchen is closed on Mondays. We open again Tuesday at 10:00.'
+                : 'The kitchen is closed right now. Orders are accepted Tuesday–Sunday from 10:00 to 17:00.';
+        }
+
+        function canPlaceKitchenOrder() {
+            const status = getKitchenStatus();
+            if (status.isOpen) return true;
+            alert(kitchenClosedMessage());
+            return false;
+        }
+
         // CHECKOUT
         function openCheckout() {
             if (!cartData.items || cartData.items.length === 0) return alert('Bag is empty.');
+            if (!canPlaceKitchenOrder()) return;
             if (!userSession) {
                 closeCheckout();
                 navigate('account');
@@ -1774,6 +1807,7 @@
 
         async function handleCheckout(e) {
             e.preventDefault();
+            if (!canPlaceKitchenOrder()) return;
             if (checkoutStep !== 3) {
                 nextCheckoutStep(checkoutStep + 1);
                 return;
