@@ -25,11 +25,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://db.onlinewebfonts.com/c/11289a678c4607112a7ffdb6b86812c8?family=Druk+Wide+Cy+Bold+Regular"
-        rel="stylesheet">
-
     <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -67,8 +64,28 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* Druk-Wide-inspired treatment: Bowlby One is the closest practical
+           hosted substitute here. The horizontal expansion gives it the wide,
+           poster-like silhouette associated with Druk Wide. */
         .font-custom {
-            font-family: 'Druk Wide Cy Bold Regular', sans-serif !important;
+            display: inline-block;
+            font-family: 'Bowlby One', 'Arial Black', sans-serif !important;
+            font-weight: 400;
+            font-style: normal;
+            font-stretch: expanded;
+            letter-spacing: -0.035em;
+            font-synthesis: none;
+            transform: scaleX(1.5);
+            transform-origin: left center;
+            max-width: 100%;
+        }
+
+        /* Keep the expanded lettering from overwhelming small screens. */
+        @media (max-width: 640px) {
+            .font-custom {
+                transform: scaleX(1.2);
+                letter-spacing: -0.045em;
+            }
         }
 
         ::-webkit-scrollbar {
@@ -379,7 +396,7 @@
         <section class="border-y border-edge">
             <div class="max-w-4xl mx-auto px-6 py-24 text-center">
                 <p class="text-xs font-bold uppercase tracking-[0.2em] text-frost mb-3">About Our Kitchen</p>
-                <h2 class="font-serif text-4xl md:text-6xl font-custom text-ice mb-6">Kitchen Drama?</h2>
+                <h2 class="font-serif text-4xl md:text-6xl font-custom text-ice mb-6" style="-webkit-transform-origin-x: center">Kitchen Drama?</h2>
                 <p class="text-frost text-lg max-w-xl mx-auto mb-10">Nestled in the heart of Pretoria Montana, You Not
                     Cooking crafts bold, premium meals for our hard-working community. Skip the kitchen, grab our
                     heavy-duty signatures like "The G-Wagon," and let us handle the cooking. Your only job is to eat
@@ -651,9 +668,8 @@
                 </div>
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Hours</p>
-                    <p class="text-ice">Mon - Fri: 10AM - 6PM<br>
-                        Sat - Sun:
-                        Closed</p>
+                    <p class="text-ice">Mon - Sat: 10AM - 6PM<br>
+                        Sunday: Closed</p>
                 </div>
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Phone / WhatsApp</p>
@@ -702,7 +718,7 @@
         <div class="space-y-4">
             <div class="bg-surface border border-edge p-8 rounded-2xl">
                 <h3 class="text-lg font-bold text-ice mb-2">What are your hours?</h3>
-                <p class="text-frost text-sm">Tue-Thu 11AM-10PM, Fri-Sat 11AM-1AM, Sun 12PM-8PM. Monday we rest.</p>
+                <p class="text-frost text-sm">Mon-Thu 11AM-10PM, Fri-Sat 11AM-1AM. Sunday we are closed.</p>
             </div>
             <div class="bg-surface border border-edge p-8 rounded-2xl">
                 <h3 class="text-lg font-bold text-ice mb-2">Do you deliver?</h3>
@@ -801,6 +817,13 @@
                 <p class="font-serif text-4xl font-custom text-ice">Regular</p>
             </div>
         </div>
+        <div class="bg-surface border border-edge p-8 rounded-2xl mb-16">
+            <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Share the kitchen</p>
+            <h2 class="font-serif text-3xl font-custom text-ice mb-3">Become an affiliate</h2>
+            <p class="text-frost text-sm leading-relaxed mb-5">Create your personal referral code and earn a free product when someone orders using it.</p>
+            <button id="affiliate-register-button" onclick="registerAsAffiliate()" class="bg-ice text-void font-bold py-3 px-6 rounded-full hover:bg-frost transition-colors text-sm">Create my referral code</button>
+            <p id="affiliate-register-status" class="text-sm text-frost min-h-5 mt-4"></p>
+        </div>
         <div class="flex justify-between items-end mb-6">
             <div>
                 <p class="text-xs font-bold uppercase tracking-widest text-frost mb-2">Your orders</p>
@@ -897,7 +920,7 @@
             <div class="flex justify-between items-start mb-10">
                 <div>
                     <h2 class="font-serif text-3xl font-custom text-ice mb-2">Checkout</h2>
-                    <p class="text-frost text-sm">Signed-in checkout</p>
+                    <p class="text-frost text-sm">Signed-in checkout · Kitchen open Mon–Sat, 10:00–17:00 · Closed Sundays</p>
                 </div>
                 <button onclick="closeCheckout()" class="text-frost hover:text-ice"><i
                         class="fa-solid fa-xmark text-xl"></i></button>
@@ -944,6 +967,14 @@
                 <section id="checkout-step-3" class="checkout-step hidden">
                     <label class="block text-xs font-bold uppercase tracking-widest text-frost mb-3">Payment</label>
                     <div class="border border-edge rounded-xl p-5 mb-6 text-ice"><i class="fa-solid fa-money-bill-wave mr-2 text-neon"></i>Cash on delivery</div>
+
+                    <div class="border border-edge rounded-xl p-5 mb-6">
+                        <label for="co-referral-code" class="block text-xs font-bold uppercase tracking-widest text-frost mb-3">Affiliate code <span class="text-frost/60 normal-case tracking-normal">(optional)</span></label>
+                        <div class="flex gap-2">
+                            <input type="text" id="co-referral-code" placeholder="Enter code" autocomplete="off" class="flex-1 bg-deep border border-edge p-4 rounded-xl text-ice outline-none focus:border-frost transition-colors text-sm uppercase">
+                        </div>
+                        <p id="co-referral-status" class="text-xs text-frost mt-2 min-h-4">Have an affiliate code? Add it here.</p>
+                    </div>
 
                     <div class="border-t border-edge pt-6 space-y-2 text-sm">
                     <div class="flex justify-between text-frost"><span>Subtotal</span><span id="co-subtotal"
@@ -1031,6 +1062,11 @@
          */
         const CONFIG = {
             API_BASE: 'https://gigs.varsitymarket.co.za/store-access',
+            // Referral Worker settings. Replace both values before publishing.
+            REFERRAL_API_BASE: 'https://animehood0access0point.levidoc00.workers.dev',
+            REFERRAL_API_TOKEN: 'change-this-checkout-token',
+            // Set to false while debugging to allow checkout outside kitchen hours.
+            ENFORCE_KITCHEN_HOURS: false,
             STORE_ID: '2',
             API_KEY: 'vm_live_61c16be5a975a49380c11207e1c7802b17c3b0a6564daa97',
             STORE_NAME: 'We Dont Eats',
@@ -1038,9 +1074,9 @@
             FREE_SHIPPING_THRESHOLD: 500,
             SHIPPING_COST: 25,
             DELIVERY_AREA: 'Montana or Sinoville, Pretoria',
-            DISCORD_REVIEW_WEBHOOK: 'https://discord.com/api/webhooks/1569611656475058309/PPxEfB_qVgP28ZYm4pxIw4zE7FlTC4P0h6LFPrDyo-NhnbymHB2X8bvRUH4-WgseV1LX',
-            DISCORD_CONTACT_WEBHOOK: 'https://discord.com/api/webhooks/1569611656475058309/PPxEfB_qVgP28ZYm4pxIw4zE7FlTC4P0h6LFPrDyo-NhnbymHB2X8bvRUH4-WgseV1LX',
-            DISCORD_ORDER_WEBHOOK: 'https://discord.com/api/webhooks/1569611656475058309/PPxEfB_qVgP28ZYm4pxIw4zE7FlTC4P0h6LFPrDyo-NhnbymHB2X8bvRUH4-WgseV1LX'
+            DISCORD_REVIEW_WEBHOOK: 'https://discord.com/api/webhooks/1575361746162684126/GGOsSzNPu-1kaAITi0SDIyecHJ1EzY6Hujil0RT0G6_wYfvwce7io6DgGz0HmmZSpfGH',
+            DISCORD_CONTACT_WEBHOOK: 'https://discord.com/api/webhooks/1575361746162684126/GGOsSzNPu-1kaAITi0SDIyecHJ1EzY6Hujil0RT0G6_wYfvwce7io6DgGz0HmmZSpfGH',
+            DISCORD_ORDER_WEBHOOK: 'https://discord.com/api/webhooks/1575361746162684126/GGOsSzNPu-1kaAITi0SDIyecHJ1EzY6Hujil0RT0G6_wYfvwce7io6DgGz0HmmZSpfGH'
         };
 
         // API
@@ -1131,7 +1167,7 @@
         const paymentMethod = 'cod';
         const TOPPING_OPTIONS = {
             remove: ['Cheese', 'Atchar', 'Egg', 'Bacon', 'Russian', 'Polony'],
-            add: ['Extra cheese', 'Extra bacon', 'Extra egg', 'Extra atchar']
+            add: ['Extra cheese', 'Extra bacon', 'Extra egg', 'Extra atchar', 'Extra Russian', 'Extra polony']
         };
         let pdpCustomizations = { add: {}, remove: [] };
         let cartCustomizations = readCache('ynce_cart_customizations_v1', {});
@@ -1633,9 +1669,43 @@
             updateCartTotal();
         }
 
+        // KITCHEN HOURS: Pretoria/South Africa time (UTC+2, no daylight-saving changes).
+        function getKitchenStatus() {
+            const parts = new Intl.DateTimeFormat('en-ZA', {
+                timeZone: 'Africa/Johannesburg',
+                weekday: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).formatToParts(new Date());
+            const weekday = parts.find(part => part.type === 'weekday')?.value?.toLowerCase();
+            const hour = Number(parts.find(part => part.type === 'hour')?.value || 0);
+            const minute = Number(parts.find(part => part.type === 'minute')?.value || 0);
+            const minutes = (hour * 60) + minute;
+            const isSunday = weekday === 'sun';
+            const isOpen = !isSunday && minutes >= 600 && minutes < 1020;
+            return { isOpen, isSunday };
+        }
+
+        function kitchenClosedMessage() {
+            const status = getKitchenStatus();
+            return status.isSunday
+                ? 'The kitchen is closed on Sundays. We open again Monday at 10:00.'
+                : 'The kitchen is closed right now. Orders are accepted Monday–Saturday from 10:00 to 17:00.';
+        }
+
+        function canPlaceKitchenOrder() {
+            if (CONFIG.ENFORCE_KITCHEN_HOURS === false) return true;
+            const status = getKitchenStatus();
+            if (status.isOpen) return true;
+            alert(kitchenClosedMessage());
+            return false;
+        }
+
         // CHECKOUT
         function openCheckout() {
             if (!cartData.items || cartData.items.length === 0) return alert('Bag is empty.');
+            if (!canPlaceKitchenOrder()) return;
             if (!userSession) {
                 closeCheckout();
                 navigate('account');
@@ -1658,6 +1728,8 @@
             renderCheckoutCustomizations();
             nextCheckoutStep(1);
             document.getElementById('checkout-payment-status').textContent = '';
+            document.getElementById('co-referral-status').textContent = 'Have an affiliate code? Add it here.';
+            document.getElementById('co-referral-status').className = 'text-xs text-frost mt-2 min-h-4';
             document.getElementById('checkout-submit').textContent = 'Place Cash Order';
             document.getElementById('checkout-modal').classList.add('open');
             toggleCart();
@@ -1726,8 +1798,88 @@
             document.getElementById('order-confirmation-modal').classList.add('hidden');
         }
 
+        async function registerAsAffiliate() {
+            const status = document.getElementById('affiliate-register-status');
+            const button = document.getElementById('affiliate-register-button');
+            if (!userSession?.email) {
+                status.textContent = 'Please sign in first.';
+                status.className = 'text-sm text-red-400 min-h-5 mt-4';
+                return;
+            }
+            const externalId = String(userSession.id || userSession.user_id || userSession.customer_id || userSession.email).trim();
+            button.disabled = true;
+            button.textContent = 'Creating code…';
+            status.textContent = 'Setting up your referral code…';
+            status.className = 'text-sm text-frost min-h-5 mt-4';
+            try {
+                if (!CONFIG.REFERRAL_API_BASE || CONFIG.REFERRAL_API_BASE.includes('YOUR-WORKER')) {
+                    throw new Error('Referral service is not configured yet.');
+                }
+                const response = await fetch(`${CONFIG.REFERRAL_API_BASE.replace(/\/+$/, '')}/affiliate/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.REFERRAL_API_TOKEN}`
+                    },
+                    body: JSON.stringify({
+                        name: userSession.name || userSession.full_name || userSession.email.split('@')[0],
+                        email: userSession.email,
+                        external_id: externalId
+                    })
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(result.error?.message || 'Could not create your referral code.');
+                const data = result.data || result;
+                status.textContent = data.existing
+                    ? `Your referral code is ${data.code}.`
+                    : `Your referral code is ${data.code}. Share it with friends.`;
+                status.className = 'text-sm text-neon min-h-5 mt-4 font-bold';
+                button.textContent = 'Referral code ready';
+            } catch (error) {
+                console.error('Affiliate registration error:', error);
+                status.textContent = error.message || 'Could not create your referral code.';
+                status.className = 'text-sm text-red-400 min-h-5 mt-4';
+                button.disabled = false;
+                button.textContent = 'Create my referral code';
+            }
+        }
+
+        async function attributeReferral(orderId) {
+            const input = document.getElementById('co-referral-code');
+            const status = document.getElementById('co-referral-status');
+            const code = input.value.trim().toUpperCase();
+            if (!code) return null;
+            if (!CONFIG.REFERRAL_API_BASE || CONFIG.REFERRAL_API_BASE.includes('YOUR-WORKER')) {
+                throw new Error('Referral service is not configured yet.');
+            }
+            const buyerId = String(userSession?.id || userSession?.user_id || userSession?.customer_id || userSession?.email || '').trim();
+            if (!buyerId) throw new Error('We could not identify the checkout customer for this referral.');
+            status.textContent = 'Applying affiliate code…';
+            status.className = 'text-xs text-frost mt-2 min-h-4';
+            const response = await fetch(`${CONFIG.REFERRAL_API_BASE.replace(/\/+$/, '')}/attribute`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${CONFIG.REFERRAL_API_TOKEN}`,
+                    'Idempotency-Key': `checkout-${String(orderId)}`
+                },
+                body: JSON.stringify({
+                    code,
+                    buyer_id: buyerId,
+                    order_id: String(orderId),
+                    product: cartData.items.map(item => `${item.quantity} x ${item.name}`).join(', ').slice(0, 200)
+                })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error?.message || 'This affiliate code could not be applied.');
+            status.textContent = result.data?.idempotent ? 'Affiliate code already recorded.' : 'Affiliate code recorded. Thank you for supporting our affiliates.';
+            status.className = 'text-xs text-neon mt-2 min-h-4';
+            return result.data || result;
+        }
+
         async function handleCheckout(e) {
             e.preventDefault();
+            if (!canPlaceKitchenOrder()) return;
             if (checkoutStep !== 3) {
                 nextCheckoutStep(checkoutStep + 1);
                 return;
@@ -1799,6 +1951,17 @@
                     result = await api.createCashCheckout(orderDetails);
                 }
                 const remoteOrder = result.data || result.order || result;
+                const referralOrderId = remoteOrder.id || remoteOrder.order_id || `local-${Date.now()}`;
+                let referralAttribution = null;
+                if (document.getElementById('co-referral-code').value.trim()) {
+                    try {
+                        referralAttribution = await attributeReferral(referralOrderId);
+                    } catch (referralError) {
+                        console.warn('Referral attribution error:', referralError);
+                        document.getElementById('co-referral-status').textContent = `Order placed, but the affiliate code was not recorded: ${referralError.message}`;
+                        document.getElementById('co-referral-status').className = 'text-xs text-red-400 mt-2 min-h-4';
+                    }
+                }
                 const localOrder = {
                     ...remoteOrder,
                     local_order_id: `local-${Date.now()}`,
@@ -1806,6 +1969,7 @@
                     estimated_delivery_at: remoteOrder.estimated_delivery_at || estimatedDeliveryAt,
                     total: orderTotal,
                     status: remoteOrder.status || 'pending',
+                    referral_attribution: referralAttribution,
                     items: cartData.items.map(item => ({
                         product_id: getCartProductId(item),
                         name: item.name,
@@ -2059,7 +2223,7 @@
         });
     </script>
 
-    <script src="http://gigs.varsitymarket.co.za/track/vm.analytics.js" data-store-id="2" defer></script>
+    <script src="https://gigs.varsitymarket.co.za/track/vm.analytics.js" data-store-id="2" defer></script>
     <script src="https://demo-embedded.varsitymarket.co.za/track/vm.analytics.js" data-store-id="78" defer></script>
 </body>
 
